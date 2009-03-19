@@ -43,28 +43,25 @@
     };
     
     // AJAX value handling
+    function updateValue(field, data) {
+        field = $('#archetypes-fieldname-' + field + ' #' + field);
+        field.val(data).change();
+        if (field.is('.kupu-editor-textarea')) // update kupu editor too
+            field.siblings('iframe:first').contents().find('body').html(data);
+    }
     function handleMasterValueChange(event) {
         var value = $.nodeName(this, 'input') ? 
             '' + this.checked : $(this).val();
         var slave = event.data.slaveid;
         var cachekey = [this.id, slave, value].join(':');
-        var target = $('#archetypes-fieldname-' + slave + ' #' + slave);
         if (cache[cachekey] == undefined)
             $.getJSON(event.data.url, 
                 { field: this.id, slave: slave, value: value },
                 function(data) {
                     cache[cachekey] = data;
-                    target.val(data).change();
-                    if (target.is('.kupu-editor-textarea'))
-                        target.siblings('iframe:first').contents().find('body')
-                            .html(data);
+                    updateValue(slave, data);
                 });
-            else {
-                target.val(cache[cachekey]).change();
-                if (target.is('.kupu-editor-textarea'))
-                    target.siblings('iframe:first').contents().find('body')
-                        .html(cache[cachekey]);
-            }
+            else updateValue(slave, cache[cachekey]);
     };
     $.fn.bindMasterSlaveValue = function(slaveid, url) {
         var data = { slaveid: slaveid, url: url };
