@@ -1,7 +1,10 @@
 Changelog
 =========
 
-0.3 - Unreleased
+0.4 - Unreleased
+----------------
+
+0.3 - 2009-03-19
 ----------------
 
 * Converted to an egg
