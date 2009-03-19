@@ -25,9 +25,18 @@
 
 <browser:view
     name="setup_slaves"
-    for="*"
+    for="Products.Archetypes.interfaces.IBaseObject"
     class=".browser.SetupSlaves"
     permission="zope.Public"
     />
+
+<browser:page
+    name="masterselect-jsonvalue"
+    for="Products.Archetypes.interfaces.IBaseObject"
+    class=".browser.MasterSelectJSONValue"
+    permission="zope2.View"
+    />
+
+<browser:resource name="masterselect.js" file="masterselect.js" />
 
 </configure>

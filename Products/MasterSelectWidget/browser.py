@@ -1,64 +1,94 @@
 # -*- coding: utf-8 -*-
+import simplejson as json
+from zope.i18n import translate
+from Products.Archetypes import DisplayList
 from Products.Five import BrowserView
-from Products.CMFCore.utils import getToolByName
 
-registerDynamicSelect = '''
-registerDynamicSelect('edit_form',
-                      '%(master)s',
-                      '%(name)s',
-                      '%(action)s',
-                      '%(vocab_method)s',
-                      '%(control_param)s',
-                      '%(absolute_url)s');
-'''
+SELECT = "$('#archetypes-fieldname-%(master)s')"
 
-registerHideOnSelect = '''
-registerHideOnSelect('edit_form',
-                     '%(master)s',
-                     '%(name)s',
-                     '%(action)s',
-                     %(hidden)s);
+BINDERS = dict(
+    vocabulary=SELECT + ".bindMasterSlaveVocabulary('%(name)s', "
+        "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    value=SELECT + ".bindMasterSlaveValue('%(name)s', "
+        "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    toggle=SELECT + ".bindMasterSlaveToggle('%(name)s', '%(action)s', "
+        "%(hidden)s);",
+)
+
+JQUERY_ONLOAD = '''\
+(function($) { $(function() {
+%s
+});})(jQuery);
 '''
 
 def boolean_value(value):
-    if value in (1, '1', 'true', 'True', True):
-        return 'true'
-    return 'false'
-
+    return value in (1, '1', 'true', 'True', True)
 
 class SetupSlaves(BrowserView):
-    """javascript stuff for slaves fields
-    """
-
-    def __call__(self, field):
-        """render javascript
-        """
-        js = []
+    """Generate Javascript to bind masters to slaves"""
+    
+    def renderJS(self, field):
         master = field.getName()
         slaves = getattr(field.widget, 'slave_fields', ())
         for s in slaves:
             slave = s.copy()
             slave['master'] = master
             slave['absolute_url'] = self.context.absolute_url()
-            action = slave.get('action', None)
-            if action in ['vocabulary', 'value']:
-                slave.setdefault('control_param','master_value')
-                js.append(registerDynamicSelect % slave)
 
-            else:
-                hide_values = slave.get('hide_values', None)
-
-                if hide_values is None:
-                    hide_values = []
-                elif type(hide_values) not in (tuple,list):
-                    hide_values = [hide_values]
-
+            slave.setdefault('control_param','master_value')
+            hidden = '[]'
+            if 'hide_values' in slave:
+                values = slave['hide_values']
+                if not isinstance(values, (tuple,list)):
+                    values = [values]
                 if field.type == 'boolean':
-                    hide_values = [boolean_value(v) for v in hide_values]
+                    values = [boolean_value(v) for v in values]
+                else:
+                    values = [str(v) for v in values]
+                hidden = json.dumps(values)
+            slave['hidden'] = hidden
+            
+            template = BINDERS.get(slave.get('action')) or BINDERS['toggle']
+            yield template % slave
+    
+    def __call__(self, field):
+        """render javascript"""            
+        return JQUERY_ONLOAD % '\n'.join(self.renderJS(field))
 
-                hidden = "new Array('%s')" % "','".join(hide_values)
-                slave['hidden'] = hidden
-                js.append(registerHideOnSelect % slave)
-
-        return ''.join(js)
-
+class MasterSelectJSONValue(BrowserView):
+    """JSON vocabulary or value for the given slave field"""
+    
+    def __call__(self):
+        self.request.response.setHeader(
+            'Content-Type', 'application/json; charset=utf-8')
+        
+        field = self.request['field']
+        slaveid = self.request['slave']
+        value = self.request['value']
+        
+        slaves = getattr(self.context.Schema()[field].widget, 
+            'slave_fields', ())
+        for slave in slaves:
+            if slave['name'] != slaveid:
+                continue
+            
+            action = slave.get('action')
+            if action not in ['vocabulary', 'value']:
+                raise ValueError('Invalid master-slave action')
+            
+            kw = { slave['control_param']: value }
+            result = getattr(self.context, slave['vocab_method'])(**kw)
+            
+            if action == 'value':
+                return json.dumps(translate(result, value))
+            
+            if isinstance(result, (tuple, list)):
+                result = DisplayList(zip(result, result))
+            return json.dumps([
+                dict(
+                    value=item,
+                    label=translate(result.getValue(item), self.request)
+                ) for item in result
+            ])
+        
+        raise ValueError('No such master-slave combo')

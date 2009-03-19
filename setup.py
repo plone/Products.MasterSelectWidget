@@ -26,6 +26,7 @@ setup(name='Products.MasterSelectWidget',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'simplejson',
           # -*- Extra requirements: -*-
       ],
       entry_points="""

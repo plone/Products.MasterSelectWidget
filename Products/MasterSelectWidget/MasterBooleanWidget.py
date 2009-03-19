@@ -10,7 +10,7 @@ class MasterBooleanWidget(BooleanWidget):
     _properties.update({
         'macro': 'masterboolean',
         'format': 'select',
-        'helper_js': ('modifySelectList.js',),
+        'helper_js': ('++resource++masterselect.js',),
         'slave_fields': (), # Fields controlled by this field, if control_type
                             # is vocabulary only the first entry is used
         })

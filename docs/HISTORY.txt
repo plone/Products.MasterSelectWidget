@@ -13,10 +13,9 @@ Changelog
 * Added a MasterBooleanWidget to the demo.
   [mj]
 
-* Fixed a bug in getXMLSlaveValue so that it now truely returns the values instead
-  of just the provided parameter.
-  [ender]
-  
+* Refactored javascript to use jQuery and a view for the AJAX results.
+  [mj]
+
 * Added simple support for updating kupu slave fields.
   [ender]
 
@@ -25,12 +24,6 @@ Changelog
 
 * Replace old dtml with browser view
   [gawel]
-
-* Fixed the charset encoding problem with the XML responses.
-  [deo]
-
-* Formated README.txt with proper STX syntax.
-  [deo]
 
 * Updated docs, did some general small cleanup and added examples
   for the new 'show'/'enable' actions.
