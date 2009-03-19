@@ -1,8 +1,11 @@
 Changelog
 =========
 
-0.2.3 - Unreleased
-------------------
+0.3 - Unreleased
+----------------
+
+* Converted to an egg
+  [mj]
 
 * Fixed a bug in getXMLSlaveValue so that it now truely returns the values instead
   of just the provided parameter.
