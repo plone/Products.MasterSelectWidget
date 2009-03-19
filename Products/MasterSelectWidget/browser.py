@@ -35,7 +35,7 @@ class SetupSlaves(BrowserView):
         """
         js = []
         master = field.getName()
-        slaves = getattr(field.widget, 'slave_fields')
+        slaves = getattr(field.widget, 'slave_fields', ())
         for s in slaves:
             slave = s.copy()
             slave['master'] = master
