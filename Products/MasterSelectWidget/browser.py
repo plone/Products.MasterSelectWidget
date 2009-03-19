@@ -80,7 +80,7 @@ class MasterSelectJSONValue(BrowserView):
             result = getattr(self.context, slave['vocab_method'])(**kw)
             
             if action == 'value':
-                return json.dumps(translate(result, value))
+                return json.dumps(translate(result, self.request))
             
             if isinstance(result, (tuple, list)):
                 result = DisplayList(zip(result, result))
