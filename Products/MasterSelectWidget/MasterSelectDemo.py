@@ -3,6 +3,7 @@
 from Products.Archetypes.public import *
 from AccessControl import ClassSecurityInfo
 from Products.MasterSelectWidget.MasterSelectWidget import MasterSelectWidget
+from Products.MasterSelectWidget.MasterBooleanWidget import MasterBooleanWidget
 
 # Define slave parameters for masterField
 slave_fields = (
@@ -209,6 +210,24 @@ schema = BaseSchema + Schema((
         ),
     ),
 
+    BooleanField(
+        name='masterBoolean',
+        widget=MasterBooleanWidget(
+            slave_fields=(
+                dict(name='slaveField6', action='show', hide_values=1),),
+            description='This field controls the visibility of slaveField6, '
+                'which will only become visible when this checkbox is checked.'
+        ),
+    ),
+
+    StringField(
+        name='slaveField6',
+        widget=StringWidget(
+            description="This field's visiblity is controlled by the value "
+                        "selected in masterBoolean. It will become visible "
+                        "only when that checkbox is checked.",
+        ),
+    ),
 ))
 
 class MasterSelectDemo(BaseContent):

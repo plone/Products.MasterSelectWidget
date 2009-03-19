@@ -10,6 +10,9 @@ Changelog
 * Moved configuration (skin, demo type) to GenericSetup profiles.
   [mj]
 
+* Added a MasterBooleanWidget to the demo.
+  [mj]
+
 * Fixed a bug in getXMLSlaveValue so that it now truely returns the values instead
   of just the provided parameter.
   [ender]
