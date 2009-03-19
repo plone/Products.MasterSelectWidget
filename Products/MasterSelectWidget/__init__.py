@@ -1,9 +1,6 @@
 from Products.CMFCore.utils import ContentInit
-from Products.CMFCore.DirectoryView import registerDirectory
 from Products.Archetypes.public import process_types, listTypes
 from Products.MasterSelectWidget.config import *
-
-registerDirectory(SKINS_DIR, GLOBALS)
 
 def initialize(context):
     import MasterSelectDemo

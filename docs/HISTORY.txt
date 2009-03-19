@@ -7,6 +7,9 @@ Changelog
 * Converted to an egg
   [mj]
 
+* Moved configuration (skin, demo type) to GenericSetup profiles.
+  [mj]
+
 * Fixed a bug in getXMLSlaveValue so that it now truely returns the values instead
   of just the provided parameter.
   [ender]

@@ -1,7 +1,27 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     >
+
+<genericsetup:registerProfile
+    name="default"
+    title="MasterSelectWidget"
+    directory="profiles/default"
+    description="MasterSelectWidget skins"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+<genericsetup:registerProfile
+    name="demo"
+    title="MasterSelectWidget demo"
+    directory="profiles/demo"
+    description="MasterSelectWidget demonstration type"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+<cmf:registerDirectory name="skins" directory="skins" recursive="True"/>
 
 <browser:view
     name="setup_slaves"
