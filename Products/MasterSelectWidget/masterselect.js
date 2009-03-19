@@ -9,7 +9,7 @@
         var values = {}; // Remember current selections; reselect afterwards
         $('#archetypes-fieldname-' + field).find('select')
             .each(function() { values[this] = $(this).val() })
-            .empty().html( // Replace all options with new onesguid
+            .empty().html( // Replace all options with new ones
                 $.map(data, function(entry) {
                     return '<option value="' + entry.value + '">' + 
                         entry.label + '</option>';
