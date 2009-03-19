@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="plone">
+
+<head>
+    <title></title>
+</head>
+
+<body>
+
+    <!-- Master Selection Widgets -->
+
+    <metal:view_macro define-macro="view">
+        <metal:use_macro use-macro="here/widgets/selection/macros/view"/>
+    </metal:view_macro>
+
+    <metal:define define-macro="edit">
+        <script tal:define="setup_slaves nocall:here/@@setup_slaves"
+                tal:content="structure python: setup_slaves(field)">
+        </script>
+        <metal:use use-macro="here/widgets/selection/macros/edit"/>
+    </metal:define>
+
+    <div metal:define-macro="search">
+        <div metal:use-macro="here/widgets/selection/macros/search" />
+    </div>
+
+</body>
+
+</html>

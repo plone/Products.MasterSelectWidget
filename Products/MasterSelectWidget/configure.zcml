@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+    <browser:view
+        name="setup_slaves"
+        for="*"
+        class=".browser.SetupSlaves"
+        permission="zope.Public"
+        />
+
+
+</configure>
