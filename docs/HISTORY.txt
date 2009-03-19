@@ -1,75 +1,84 @@
-Version 0.2.3, Unreleased
-    * Fixed a bug in getXMLSlaveValue so that it now truely returns the values instead
-      of just the provided parameter.
-      [ender]
-      
-    * Added simple support for updating kupu slave fields.
-      [ender]
+Changelog
+=========
 
-    * Added MasterBooleanWidget
-      [gawel]
+0.2.3 - Unreleased
+------------------
 
-    * Replace old dtml with browser view
-      [gawel]
+* Fixed a bug in getXMLSlaveValue so that it now truely returns the values instead
+  of just the provided parameter.
+  [ender]
+  
+* Added simple support for updating kupu slave fields.
+  [ender]
 
-    * Fixed the charset encoding problem with the XML responses.
-      [deo]
+* Added MasterBooleanWidget
+  [gawel]
 
-    * Formated README.txt with proper STX syntax.
-      [deo]
+* Replace old dtml with browser view
+  [gawel]
 
-    * Updated docs, did some general small cleanup and added examples
-      for the new 'show'/'enable' actions.
-      [deo]
+* Fixed the charset encoding problem with the XML responses.
+  [deo]
 
-    * Added new 'enable' action, which only activate the slave field(s)
-      when a particular value is selected in the master field.
-      [deo]
+* Formated README.txt with proper STX syntax.
+  [deo]
 
-    * Added new 'show' action, which only display the slave field(s)
-      when a particular value is selected in the master field.
-      [deo]
+* Updated docs, did some general small cleanup and added examples
+  for the new 'show'/'enable' actions.
+  [deo]
 
-    * Made sure to keep the values initialy selected when using a dynamic
-      vocabulary.
-      [deo]
+* Added new 'enable' action, which only activate the slave field(s)
+  when a particular value is selected in the master field.
+  [deo]
 
+* Added new 'show' action, which only display the slave field(s)
+  when a particular value is selected in the master field.
+  [deo]
 
-Version 0.2.2, 2005-11-09
-
-    * Fixed some IE bugs and made hiding use display="none" to remove the
-      element from the page.  Thanks to Yuta Kashino for pinting these out.
-      [alecm]
-
-    * Added new action for changing value in StringFields using simple
-      widgets.  Thanks to Joachim Koenig-Baltes for the idea and patch.
-      [alecm]
+* Made sure to keep the values initialy selected when using a dynamic
+  vocabulary.
+  [deo]
 
 
-Version 0.2.1, 2005-06-17
+0.2.2 - 2005-11-09
+------------------
 
-    * Fixed bug that caused unnecessary js alert when hiding some widget types.
-      [alecm]
+* Fixed some IE bugs and made hiding use display="none" to remove the
+  element from the page.  Thanks to Yuta Kashino for pinting these out.
+  [alecm]
 
-
-Version 0.2, 2005-06-16
-
-    * Added support for hiding and disabling compound widgets like Boolean
-      and InAndOut.
-      [alecm]
-
-    * Added the ability for a single master to apply multiple actions on a
-      single slave.  Now a master widget can both hide and change the
-      vocabulary of a slave field.  Just add an entry to slave_fields for
-      each action desired.
-      [alecm]
-
-    * Made getXMLSelectVocab accept methods that return lists or tuples
-      instead of only DisplayLists.  DisplayLists are preferred though.
-      [alecm]
+* Added new action for changing value in StringFields using simple
+  widgets.  Thanks to Joachim Koenig-Baltes for the idea and patch.
+  [alecm]
 
 
-Version 0.1, 2005-06-15
+0.2.1 - 2005-06-17
+------------------
 
-    * Initial checkin, ready for testing.
-      [alecm]
+* Fixed bug that caused unnecessary js alert when hiding some widget types.
+  [alecm]
+
+
+0.2 - 2005-06-16
+------------------
+
+* Added support for hiding and disabling compound widgets like Boolean
+  and InAndOut.
+  [alecm]
+
+* Added the ability for a single master to apply multiple actions on a
+  single slave.  Now a master widget can both hide and change the
+  vocabulary of a slave field.  Just add an entry to slave_fields for
+  each action desired.
+  [alecm]
+
+* Made getXMLSelectVocab accept methods that return lists or tuples
+  instead of only DisplayLists.  DisplayLists are preferred though.
+  [alecm]
+
+
+0.1 - 2005-06-15
+------------------
+
+* Initial checkin, ready for testing.
+  [alecm]
