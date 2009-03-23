@@ -27,11 +27,13 @@ def boolean_value(value):
 class SetupSlaves(BrowserView):
     """Generate Javascript to bind masters to slaves"""
     
+    def getSlaves(self, field):
+        for slave in getattr(field.widget, 'slave_fields', ()):
+            yield slave.copy()
+        
     def renderJS(self, field):
         master = field.getName()
-        slaves = getattr(field.widget, 'slave_fields', ())
-        for s in slaves:
-            slave = s.copy()
+        for slave in self.getSlaves(field):
             slave['master'] = master
             slave['absolute_url'] = self.context.absolute_url()
 
@@ -58,6 +60,14 @@ class SetupSlaves(BrowserView):
 class MasterSelectJSONValue(BrowserView):
     """JSON vocabulary or value for the given slave field"""
     
+    def getSlaves(self, fieldname):
+        return getattr(self.context.Schema()[fieldname].widget, 
+            'slave_fields', ())
+    
+    def getVocabulary(self, slave, value):
+        kw = { slave['control_param']: value }
+        result = getattr(self.context, slave['vocab_method'])(**kw)
+    
     def __call__(self):
         self.request.response.setHeader(
             'Content-Type', 'application/json; charset=utf-8')
@@ -66,9 +76,7 @@ class MasterSelectJSONValue(BrowserView):
         slaveid = self.request['slave']
         value = self.request['value']
         
-        slaves = getattr(self.context.Schema()[field].widget, 
-            'slave_fields', ())
-        for slave in slaves:
+        for slave in self.getSlaves(field):
             if slave['name'] != slaveid:
                 continue
             
@@ -76,8 +84,7 @@ class MasterSelectJSONValue(BrowserView):
             if action not in ['vocabulary', 'value']:
                 raise ValueError('Invalid master-slave action')
             
-            kw = { slave['control_param']: value }
-            result = getattr(self.context, slave['vocab_method'])(**kw)
+            result = self.getVocabulary(slave, value)
             
             if action == 'value':
                 return json.dumps(translate(result, self.request))
