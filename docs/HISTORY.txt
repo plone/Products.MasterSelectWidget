@@ -1,8 +1,11 @@
 Changelog
 =========
 
-0.4 - Unreleased
+0.4 - 2009-03-24
 ----------------
+
+* Allow views to be sub-classed more easily.
+  [elro]
 
 0.3 - 2009-03-19
 ----------------
