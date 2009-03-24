@@ -111,4 +111,4 @@ Credits
     Alec Mitchell: apm13@columbia.edu
 
   Contributor --
-    Dorneles Treméa: deo@plonesolutions.com
+    Dorneles Tremea: deo@plonesolutions.com
