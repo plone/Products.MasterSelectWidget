@@ -67,6 +67,7 @@ class MasterSelectJSONValue(BrowserView):
     def getVocabulary(self, slave, value):
         kw = { slave['control_param']: value }
         result = getattr(self.context, slave['vocab_method'])(**kw)
+        return result
     
     def __call__(self):
         self.request.response.setHeader(
