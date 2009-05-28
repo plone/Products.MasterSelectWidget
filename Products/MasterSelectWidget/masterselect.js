@@ -1,4 +1,4 @@
-﻿(function($) {
+(function($) {
     var cache = {}; // Cache AJAX results
     var guid = 0;   // Used to give each handler binding a unique name
     // Anonymizer so we can bind the same handler multiple times per eventtype

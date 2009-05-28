@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import simplejson as json
 from zope.i18n import translate
 from Products.Archetypes import DisplayList
