@@ -1,4 +1,5 @@
 MasterSelectWidget
+==================
 
   This is an Archetypes widget which controls the vocabulary or display
   of other fields on an edit page. It needs to be given information about
