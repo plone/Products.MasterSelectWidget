@@ -1,6 +1,11 @@
-Changelog
+﻿Changelog
 =========
 
+0.4.3 - Unreleased
+------------------
+* Correct missing return from selected values in the slave field
+  [danipessanha]
+  
 0.4.2 - 2009-04-01
 ----------------
 * Correct missing return value from .browser.MasterSelectJSONValue.getVocabulary

@@ -1,4 +1,4 @@
-(function($) {
+﻿(function($) {
     var cache = {}; // Cache AJAX results
     var guid = 0;   // Used to give each handler binding a unique name
     // Anonymizer so we can bind the same handler multiple times per eventtype
@@ -11,10 +11,12 @@
             .each(function() { values[this] = $(this).val() })
             .empty().html( // Replace all options with new ones
                 $.map(data, function(entry) {
-                    return '<option value="' + entry.value + '">' + 
+                    return '<option value="' + entry.value + '" '+ entry.selected +' >' + 
                         entry.label + '</option>';
                 }).join('')
-            ).each(function() { $(this).val(values[this]); }).change();
+                ).each(function(){if (!(this.selectedIndex))
+                                     $(this).val(values[this])}
+                                     ).change();
     };
     function handleMasterVocabularyChange(event) {
         var value = $.nodeName(this, 'input') ? 

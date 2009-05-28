@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import simplejson as json
 from zope.i18n import translate
 from Products.Archetypes import DisplayList
@@ -92,11 +92,15 @@ class MasterSelectJSONValue(BrowserView):
             
             if isinstance(result, (tuple, list)):
                 result = DisplayList(zip(result, result))
+            actualValue = self.context.Schema()[slave.get('name')].get(self.context)
+            if  not isinstance(actualValue,list):
+                actualValue = [actualValue,]
             return json.dumps([
                 dict(
                     value=item,
-                    label=translate(result.getValue(item), self.request)
+                    label=translate(result.getValue(item), self.request),
+                    selected=(item in actualValue) and 'selected' or '',
                 ) for item in result
-            ])
-        
+            ])       
+
         raise ValueError('No such master-slave combo')
