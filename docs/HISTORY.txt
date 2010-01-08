@@ -3,9 +3,14 @@ Changelog
 
 0.4.3 - Unreleased
 ------------------
+
 * Correct missing return from selected values in the slave field
   [danipessanha]
-  
+
+* compatibility with most recent archetypes versions (the `package` parameter of
+  `registerType` is no longer optional, see http://dev.plone.org/archetypes/changeset/11184#file4)
+  [fRiSi]
+
 0.4.2 - 2009-04-01
 ------------------
 * Correct missing return value from .browser.MasterSelectJSONValue.getVocabulary

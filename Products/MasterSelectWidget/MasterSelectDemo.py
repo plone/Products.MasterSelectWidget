@@ -267,4 +267,4 @@ class MasterSelectDemo(BaseContent):
         return result
 
 
-registerType(MasterSelectDemo)
+registerType(MasterSelectDemo, 'Products.MasterSelectWidget')
