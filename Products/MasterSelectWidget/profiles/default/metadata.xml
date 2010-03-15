@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <metadata>
+  <!-- increment this number if gs needs to run the import steps again. this is not the version number which
+  is given in setup.py
+  (see http://lists.plone.org/pipermail/product-developers/2008-July/002420.html)-->
   <version>0.4</version>
 </metadata>
