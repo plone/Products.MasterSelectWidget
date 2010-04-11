@@ -236,6 +236,8 @@ class MasterSelectDemo(BaseContent):
     content_icon = "document_icon.gif"
     security = ClassSecurityInfo()
 
+    _at_rename_after_creation = True # rename object according to the title
+
     security.declarePublic('getSlaveVocab')
     def getSlaveVocab(self, master):
         """Vocab method that returns a vocabulary consisting of the numbers
@@ -267,4 +269,4 @@ class MasterSelectDemo(BaseContent):
         return result
 
 
-registerType(MasterSelectDemo, 'Products.MasterSelectWidget')
+registerType(MasterSelectDemo, 'MasterSelectWidget')
