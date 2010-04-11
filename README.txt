@@ -103,9 +103,10 @@ A field which is the target of a MasterSelectWidget action may itself use
 a MasterSelectWidget to control other fields.
 
 The MasterSelectDemo type includes a number of master and slave widgets in
-different configurations. It is disabled by default, but you may add and
-test it by checking the "implicitly addable" checkbox for it in the
-MasterSelectDemo entry in the portal_types tool.
+different configurations.
+
+To enable the demo type go to portal_setup, hit the `Import` tab, select the
+`MasterSelectWidget demo` profile and click the `Import all steps` button at the bottom.
 
 Enjoy!
 
