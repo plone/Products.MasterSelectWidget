@@ -1,11 +1,15 @@
 Changelog
 =========
 
-after 0.4.3
------------
+0.4.4 - 2010-04-16
+------------------
+
+* fixed master boolean widget issues in Plone 4.0 due to jQuery changes.
+  [alecm]
 
 * fixed demo content (could not be added since 0.4.3 due to different productnames
   in registerType and the FTI)
+  [fRiSi]
 
 
 0.4.3 - 2010-03-15
