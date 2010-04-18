@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 * fixed master boolean widget issues in Plone 4.0 due to jQuery changes.
+  (fixes http://plone.org/products/masterselectwidget/issues/1)
   [alecm]
 
 * fixed demo content (could not be added since 0.4.3 due to different productnames
