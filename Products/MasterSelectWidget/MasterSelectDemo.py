@@ -1,8 +1,17 @@
 """Demonstrates the use of MasterSelectWidget."""
 
-from Products.Archetypes.public import *
+from Products.Archetypes.public import StringField, StringWidget
+from Products.Archetypes.public import BooleanField, BooleanWidget
+from Products.Archetypes.public import LinesField
+from Products.Archetypes.public import BaseSchema, Schema
+from Products.Archetypes.public import MultiSelectionWidget, IntegerField
+from Products.Archetypes.public import ReferenceField, ReferenceWidget
+from Products.Archetypes.public import SelectionWidget, BaseContent
+from Products.Archetypes.public import DisplayList, registerType
+
 from AccessControl import ClassSecurityInfo
 from Products.MasterSelectWidget.MasterSelectWidget import MasterSelectWidget
+from Products.MasterSelectWidget.MasterSelectWidget import MasterMultiSelectWidget
 from Products.MasterSelectWidget.MasterBooleanWidget import MasterBooleanWidget
 
 # Define slave parameters for masterField
@@ -251,6 +260,27 @@ schema = BaseSchema + Schema((
             description="This field's visiblity is controlled by the value "
                         "selected in masterBoolean. It will become visible "
                         "only when that checkbox is checked.",
+        ),
+    ),
+    LinesField(
+        name='masterMultiValued',
+        searchable=0,
+        vocabulary=['answer1', 'answer2', 'answer3', "other"],
+        widget=MasterMultiSelectWidget(
+            slave_fields = (
+                dict(name='slaveField7', action='show', hide_values=('other',)),
+            ),
+            format='checkbox',
+            description="This field controls visibility of slaveField7, which "
+                        "will be visible only if 'other' value is selected.",
+        ),
+    ),
+    StringField(
+        name='slaveField7',
+        widget=StringWidget(
+            description="This field's visiblity is controlled by the value "
+                        "selected in masterMultiValued. It will become visible "
+                        "only when 'other' checkbox is checked.",
         ),
     ),
 

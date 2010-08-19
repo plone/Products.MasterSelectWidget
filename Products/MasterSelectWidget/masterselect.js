@@ -4,18 +4,24 @@
     // Anonymizer so we can bind the same handler multiple times per eventtype
     function _anon(f) { return function() { f.apply(this, arguments); }; };
 
-    function justValue(el, return_checkbox_value) {
-        return_checkbox_value = typeof(return_checkbox_value) != 'undefined' ? return_checkbox_value : false;
+    function justValue(el, master, multivalued) {
+        master = typeof(master) != 'undefined' ? master : null;
+        multivalued = typeof(multivalued) != 'undefined' ? multivalued : false;
         var $el = $(el);
         if ($el.is('select')) {
             return $el.val()
         } else if ($el.is('input:radio')) {
             return $el.val()
         } else if ($el.is('input:checkbox')) {
-            if (return_checkbox_value) {
-                if($el.attr('checked')) {
-                    return $el.val();
-                }
+            if (master != null && multivalued) {
+                // return all checked values of the field with name set in 'master'
+                var result = new Array();
+                $el.closest('[id='+master+']').find('[name^='+master+']').each(function() {
+                    if($(this).attr('checked')) {
+                        result.push($(this).val());
+                    }
+                });
+                return result;
             } else {
                 return $el.attr('checked');
             }
@@ -168,13 +174,13 @@
     function handleMasterToggle(event) {
         var action = event.data.action;
         var slave = $('#archetypes-fieldname-' + event.data.slaveid);
-        var val = justValue(this, event.data.multivalued);
+        var val = justValue(this, event.data.master, event.data.multivalued);
         if (!jq.isArray(val)) {
             val = $.inArray(val, event.data.values) > -1;
         } else {
             var result = false;
-            $.each(val, function() {
-                if ($.inArray(this, event.data.values) > -1){
+            $.each(val, function(idx, name) {
+                if ($.inArray(name, event.data.values) > -1){
                     result = true;
                     return false
                 }
@@ -190,8 +196,12 @@
         else
             slave.find(':input').attr('disabled', val ? '' : 'disabled');
     }
-    $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
-        var data = { slaveid: slaveid, action: action, values: values, multivalued: false };
+    $.fn.bindMasterSlaveToggle = function(slaveid, action, values, master) {
+        var data = { slaveid: slaveid, 
+                     action: action, 
+                     values: values, 
+                     multivalued: false, 
+                     master: master };
         var val = typeAndValue(this);
         if (val.type == 'select') {
             var $items = $(this).find('select');
@@ -210,7 +220,13 @@
         if (val.type == 'multicheckbox') {
             var $items = $(this).find('input:checkbox');
             data.multivalued = true;
-            alert('Not implemented');
+            var $bound = $items.bind('click.masterslavetoggle' + ++guid,
+                data, _anon(handleMasterToggle))
+                .trigger('click.masterslavetoggle' + guid);
+            $bound.each(function() {
+                $item = $(this);
+                $item.attr('checked', $.inArray($item.val(), val.value) == -1 ? null : 'checked')
+            })
         }
         if (val.type == 'radio') {
             var $items = $(this).find('input:radio');

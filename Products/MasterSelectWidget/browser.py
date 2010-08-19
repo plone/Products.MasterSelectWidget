@@ -12,7 +12,7 @@ BINDERS = dict(
     value=SELECT + ".bindMasterSlaveValue('%(name)s', "
         "'%(absolute_url)s/@@masterselect-jsonvalue');",
     toggle=SELECT + ".bindMasterSlaveToggle('%(name)s', '%(action)s', "
-        "%(hidden)s);",
+        "%(hidden)s, '%(master)s');",
 )
 
 JQUERY_ONLOAD = '''\
