@@ -73,11 +73,11 @@ schema = BaseSchema + Schema((
 
     StringField(
         name='masterField',
-        searchable=1,
+        searchable=0,
         default='4',
         vocabulary=['1','2','3','4','5','6'],
         widget=MasterSelectWidget(
-            format="radio",
+            format="select",
             slave_fields=slave_fields,
             description="This field controls the vocabulary of slaveField1,"
                         "the available values in slaveField1 will be equal "
@@ -88,10 +88,22 @@ schema = BaseSchema + Schema((
                         "selected, slaveField one will be hidden.",
         ),
     ),
+    StringField(
+        name='masterRadioField',
+        searchable=0,
+        default='4',
+        vocabulary=['1','2','3','4','5','6'],
+        widget=MasterSelectWidget(
+            format="radio",
+            slave_fields=slave_fields,
+            description="This field works the same as masterField but uses "
+                        "radio controls instead a dropdown.",
+        ),
+    ),
 
     LinesField(
         name='slaveField1',
-        searchable=1,
+        searchable=0,
         default='',
         vocabulary=['1','2','3','4','5','6'],
         widget=MultiSelectionWidget(
@@ -106,7 +118,7 @@ schema = BaseSchema + Schema((
 
     IntegerField(
         name='slaveField2',
-        searchable=1,
+        searchable=0,
         default='',
         vocabulary=['10','20','30','40','50'],
         widget=SelectionWidget(
@@ -119,7 +131,7 @@ schema = BaseSchema + Schema((
 
     BooleanField(
         name='slaveField3',
-        searchable=1,
+        searchable=0,
         default='',
         widget=BooleanWidget(
             format='select',
@@ -131,7 +143,7 @@ schema = BaseSchema + Schema((
 
     StringField(
         name='masterField2',
-        searchable=1,
+        searchable=0,
         default='',
         vocabulary=['a','b','c','d','e','f'],
         widget=MasterSelectWidget(
@@ -143,10 +155,22 @@ schema = BaseSchema + Schema((
                         "contains the ROT13 transformed value of the selection.",
         ),
     ),
+    StringField(
+        name='masterRadioField2',
+        searchable=0,
+        default='',
+        vocabulary=['a','b','c','d','e','f'],
+        widget=MasterSelectWidget(
+            format="radio",
+            slave_fields=slave_fields2,
+            description="This field works the same as masterField2 but uses "
+                        "radio controls instead a dropdown.",
+        ),
+    ),
 
     StringField(
         name='slaveMasterField',
-        searchable=1,
+        searchable=0,
         default='',
         vocabulary=['1','2','3','4','5','6'],
         widget=MasterSelectWidget(
@@ -162,7 +186,7 @@ schema = BaseSchema + Schema((
 
     ReferenceField(
         name='slaveField4',
-        searchable=1,
+        searchable=0,
         default='',
         relationship="bad_news",
         widget=ReferenceWidget(
@@ -174,28 +198,28 @@ schema = BaseSchema + Schema((
 
     StringField(
         name='slaveValueField',
-        searchable=1,
+        searchable=0,
         default='',
         widget=StringWidget(
             description="This field's value is controlled by the value "
                         "selected in MasterField2. It will display the ROT13 "
                         "transformation of the value selected. The field's "
                         "availability is controlled by the value selected in "
-                        "masterField3. It only will be activated when the"
-                        "values 'one' is selected.",
+                        "masterField3. It only will be activated when the "
+                        "value 'one' is selected.",
         ),
     ),
 
     StringField(
         name='masterField3',
-        searchable=1,
+        searchable=0,
         default='',
         vocabulary=['one','two','three','other'],
         widget=MasterSelectWidget(
             slave_fields=slave_fields3,
             description="This field controls the visibility of slaveField5. "
                         "It will become visible only when the value 'other' "
-                        "is selected. It also controls the availability of"
+                        "is selected. It also controls the availability of "
                         "slaveValueField. It will be enabled when the value "
                         "'one' is selected.",
         ),
@@ -203,7 +227,7 @@ schema = BaseSchema + Schema((
 
     StringField(
         name='slaveField5',
-        searchable=1,
+        searchable=0,
         widget=StringWidget(
             description="This field's visiblity is controlled by the value "
                         "selected in masterField3. It will become visible "
@@ -229,6 +253,7 @@ schema = BaseSchema + Schema((
                         "only when that checkbox is checked.",
         ),
     ),
+
 ))
 
 class MasterSelectDemo(BaseContent):

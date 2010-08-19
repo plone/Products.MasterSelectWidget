@@ -3,7 +3,64 @@
     var guid = 0;   // Used to give each handler binding a unique name
     // Anonymizer so we can bind the same handler multiple times per eventtype
     function _anon(f) { return function() { f.apply(this, arguments); }; };
-    
+
+    function justValue(el, return_checkbox_value) {
+        return_checkbox_value = typeof(return_checkbox_value) != 'undefined' ? return_checkbox_value : false;
+        var $el = $(el);
+        if ($el.is('select')) {
+            return $el.val()
+        } else if ($el.is('input:radio')) {
+            return $el.val()
+        } else if ($el.is('input:checkbox')) {
+            if (return_checkbox_value) {
+                if($el.attr('checked')) {
+                    return $el.val();
+                }
+            } else {
+                return $el.attr('checked');
+            }
+        } 
+    }
+    function typeAndValue(el) {
+        // Returns type of widget and it's value
+        var result = new Object();
+        var $items = $(el).find('select');
+        if ($items.length == 1) {
+            result.type = 'select';
+            result.value = $($items[0]).val();
+        } else {
+            $items = $(el).find('input:checkbox');
+            if ($items.length == 1) {
+                result.type = 'checkbox';
+                result.value = $($items[0]).attr('checked');
+            } else if ($items.length > 1) {
+                result.type = 'multicheckbox';
+                result.value = new Array();
+                $items.each(function() {
+                    if (this.checked) {
+                        result.value.push($(this).val())
+                    }
+                });
+            } else {
+                $items = $(el).find('input:radio');
+                if ($items.length > 0) {
+                    result.type = 'radio';
+                    result.value = null;
+                    $items.each(function() {
+                        if (this.checked) {
+                            result.value = $(this).val();
+                            return false;
+                        }
+                    });
+                }
+            }
+        }
+        return result;
+    }
+    function cleanedName(name) {
+        // clean input name from zope type selectors (eg name:list) 
+        return name.split(':',1)[0];
+    }
     // AJAX vocabulary handling
     function updateSelect(field, data) {
         var values = {}; // Remember current selections; reselect afterwards
@@ -19,13 +76,13 @@
                                      ).change();
     };
     function handleMasterVocabularyChange(event) {
-        var value = $.nodeName(this, 'input') ? 
-            '' + this.checked : $(this).val();
+        var value = justValue(this);
         var slave = event.data.slaveid;
-        var cachekey = [this.id, slave, value].join(':');
+        var name = cleanedName(this.name);
+        var cachekey = [name, slave, value].join(':');
         if (cache[cachekey] == undefined)
             $.getJSON(event.data.url, 
-                { field: this.id, slave: slave, value: value },
+                { field: name, slave: slave, value: value },
                 function(data) {
                     cache[cachekey] = data;
                     updateSelect(slave, data);
@@ -34,14 +91,29 @@
     };
     $.fn.bindMasterSlaveVocabulary = function(slaveid, url) {
         var data = { slaveid: slaveid, url: url };
-        $(this)
-            .find('select').bind('change.masterslavevocabulary' + ++guid,
+        var val = typeAndValue(this);
+        if (val.type == 'select') {
+            var $items = $(this).find('select');
+            $items.bind('change.masterslavevocabulary' + ++guid, data,
+                    _anon(handleMasterVocabularyChange))
+                    .trigger('change.masterslavevocabulary' + guid);
+        }
+        if (val.type == 'checkbox') {
+            var $items = $(this).find('input:checkbox');
+            $items.bind('click.masterslavevocabulary' + ++guid,
                 data, _anon(handleMasterVocabularyChange))
-                .trigger('change.masterslavevocabulary' + guid).end()
-            .find('input:checkbox').bind(
-                'click.masterslavevocabulary' + ++guid, data, 
-                _anon(handleMasterVocabularyChange))
                 .trigger('click.masterslavevocabulary' + guid);
+        }
+        if (val.type == 'multicheckbox') {
+            var $items = $(this).find('input:checkbox');
+            // data.multivalued = true;
+            alert('Not implemented');
+        }
+        if (val.type == 'radio') {
+            var $items = $(this).find('input:radio');
+            var $bound = $items.bind('click.masterslavevocabulary' + ++guid,
+                data, _anon(handleMasterVocabularyChange));
+        }
     };
     
     // AJAX value handling
@@ -52,13 +124,13 @@
             field.siblings('iframe:first').contents().find('body').html(data);
     }
     function handleMasterValueChange(event) {
-        var value = $.nodeName(this, 'input') ? 
-            '' + this.checked : $(this).val();
+        var value = justValue(this);
         var slave = event.data.slaveid;
-        var cachekey = [this.id, slave, value].join(':');
+        var name = cleanedName(this.name);
+        var cachekey = [name, slave, value].join(':');
         if (cache[cachekey] == undefined)
             $.getJSON(event.data.url, 
-                { field: this.id, slave: slave, value: value },
+                { field: name, slave: slave, value: value },
                 function(data) {
                     cache[cachekey] = data;
                     updateValue(slave, data);
@@ -67,36 +139,44 @@
     };
     $.fn.bindMasterSlaveValue = function(slaveid, url) {
         var data = { slaveid: slaveid, url: url };
-        $(this)
-            .find('select').bind('change.masterslavevalue' + ++guid, data,
-                _anon(handleMasterValueChange))
-                .trigger('change.masterslavevalue' + guid).end()
-            .find('input:checkbox').bind('click.masterslavevalue' + ++guid,
+        var val = typeAndValue(this);
+        if (val.type == 'select') {
+            var $items = $(this).find('select');
+            $items.bind('change.masterslavevalue' + ++guid, data,
+                    _anon(handleMasterValueChange))
+                    .trigger('change.masterslavevalue' + guid);
+        }
+        if (val.type == 'checkbox') {
+            var $items = $(this).find('input:checkbox');
+            $items.bind('click.masterslavevalue' + ++guid,
                 data, _anon(handleMasterValueChange))
                 .trigger('click.masterslavevalue' + guid);
+        }
+        if (val.type == 'multicheckbox') {
+            var $items = $(this).find('input:checkbox');
+            // data.multivalued = true;
+            alert('Not implemented');
+        }
+        if (val.type == 'radio') {
+            var $items = $(this).find('input:radio');
+            var $bound = $items.bind('click.masterslavevalue' + ++guid,
+                data, _anon(handleMasterValueChange));
+        }
     };
     
     // Field status/visibility toggles
     function handleMasterToggle(event) {
-        console.log(event.data);
         var action = event.data.action;
         var slave = $('#archetypes-fieldname-' + event.data.slaveid);
-        var val = $(this).parent().values({returnValuesOnly:true});
-        val = $.each(val, function() {
-            if (this == 'on') {
-                return true
-            } else {
-                return this
-            }
-        });
-        if (!event.data.multivalued) {
-            val = val.pop();
+        var val = justValue(this, event.data.multivalued);
+        if (!jq.isArray(val)) {
             val = $.inArray(val, event.data.values) > -1;
         } else {
             var result = false;
             $.each(val, function() {
                 if ($.inArray(this, event.data.values) > -1){
-                    result = true;                    
+                    result = true;
+                    return false
                 }
             });
             val = result;
@@ -110,45 +190,41 @@
         else
             slave.find(':input').attr('disabled', val ? '' : 'disabled');
     }
-    $.fn.bindMasterSlaveToggle = function(slaveid, action, values, master_is_multivalued) {
-        var data = { slaveid: slaveid, action: action, values: values , multivalued: master_is_multivalued };
-        var name = $(this).attr('id').split('-').pop();
-        var val = $(this).values(name);
-        var $items = $(this).find('select');
-        if ($items.length > 0) {
+    $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
+        var data = { slaveid: slaveid, action: action, values: values, multivalued: false };
+        var val = typeAndValue(this);
+        if (val.type == 'select') {
+            var $items = $(this).find('select');
             $items.bind('change.masterslavetoggle' + ++guid, data,
                     _anon(handleMasterToggle))
                     .trigger('change.masterslavetoggle' + guid);
         }
-        $items = $(this).find('input:checkbox');
-        if ($items.length == 1) {
+        if (val.type == 'checkbox') {
+            var $items = $(this).find('input:checkbox');
             $items.bind('click.masterslavetoggle' + ++guid,
                 data, _anon(handleMasterToggle))
                 .trigger('click.masterslavetoggle' + guid);
-        } else if ($items.length > 1) {
+            // set the original value
+            $items.attr('checked', val.value);
+        }
+        if (val.type == 'multicheckbox') {
+            var $items = $(this).find('input:checkbox');
+            data.multivalued = true;
             alert('Not implemented');
         }
-        $items = $(this).find('input:radio');
-        if ($items.length > 0) {
+        if (val.type == 'radio') {
+            var $items = $(this).find('input:radio');
             var $bound = $items.bind('click.masterslavetoggle' + ++guid,
                 data, _anon(handleMasterToggle));
-            if (val != null) {
+            if (val.value != null) {
+                // click at default value
                 $bound.each(function() {
-                    if ($(this).val() == val) {
+                    if ($(this).val() == val.value) {
                         $(this).trigger('click');
+                        return false;
                     }
                 })
             }
-                
         }
-        // Maintain the value even though we fired a click event which
-        // may have changed it
-        var new_data = new Object();
-        if (val == null) {
-            new_data[name] = '';
-        } else {
-            new_data[name] = val;
-        }
-        $(this).values(new_data);
     };
 })(jQuery);
