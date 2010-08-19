@@ -113,7 +113,7 @@
         if (val.type == 'multicheckbox') {
             var $items = $(this).find('input:checkbox');
             // data.multivalued = true;
-            alert('Not implemented');
+            alert('Master slave vocabulary for multicheckbox field is not yet implemented');
         }
         if (val.type == 'radio') {
             var $items = $(this).find('input:radio');
@@ -161,7 +161,7 @@
         if (val.type == 'multicheckbox') {
             var $items = $(this).find('input:checkbox');
             // data.multivalued = true;
-            alert('Not implemented');
+            alert('Master slave value for multicheckbox field is not yet implemented');
         }
         if (val.type == 'radio') {
             var $items = $(this).find('input:radio');
