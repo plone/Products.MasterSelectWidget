@@ -12,7 +12,7 @@ BINDERS = dict(
     value=SELECT + ".bindMasterSlaveValue('%(name)s', "
         "'%(absolute_url)s/@@masterselect-jsonvalue');",
     toggle=SELECT + ".bindMasterSlaveToggle('%(name)s', '%(action)s', "
-        "%(hidden)s);",
+        "%(hidden)s, %(master_is_multivalued)s);",
 )
 
 JQUERY_ONLOAD = '''\
@@ -33,8 +33,10 @@ class SetupSlaves(BrowserView):
         
     def renderJS(self, field):
         master = field.getName()
+        multivalued = (field.type == 'lines')
         for slave in self.getSlaves(field):
             slave['master'] = master
+            slave['master_is_multivalued'] = json.dumps(multivalued)
             slave['absolute_url'] = self.context.absolute_url()
 
             slave.setdefault('control_param','master_value')

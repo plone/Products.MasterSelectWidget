@@ -38,5 +38,7 @@
     />
 
 <browser:resource name="masterselect.js" file="masterselect.js" />
+<!-- debug only --><browser:resource name="jquery.values.js" file="jquery.values.js" />
+<browser:resource name="jquery.values.min.js" file="jquery.values.min.js" />
 
 </configure>

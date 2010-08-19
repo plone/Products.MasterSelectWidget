@@ -78,10 +78,29 @@
     
     // Field status/visibility toggles
     function handleMasterToggle(event) {
+        console.log(event.data);
         var action = event.data.action;
         var slave = $('#archetypes-fieldname-' + event.data.slaveid);
-        var val = $.nodeName(this, 'input') ? this.checked : $(this).val();
-        val = $.inArray(val, event.data.values) > -1;
+        var val = $(this).parent().values({returnValuesOnly:true});
+        val = $.each(val, function() {
+            if (this == 'on') {
+                return true
+            } else {
+                return this
+            }
+        });
+        if (!event.data.multivalued) {
+            val = val.pop();
+            val = $.inArray(val, event.data.values) > -1;
+        } else {
+            var result = false;
+            $.each(val, function() {
+                if ($.inArray(this, event.data.values) > -1){
+                    result = true;                    
+                }
+            });
+            val = result;
+        }
         if ($.inArray(action, ['hide', 'disable']) > -1) {
             val = !val;
             action = action == 'hide' ? 'show' : 'enable';
@@ -91,19 +110,45 @@
         else
             slave.find(':input').attr('disabled', val ? '' : 'disabled');
     }
-    $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
-        var data = { slaveid: slaveid, action: action, values: values };
-        var checkbox = $(this).find('input:checkbox')
-        var checked = checkbox.length ? checkbox.attr('checked') : undefined;
-        $(this)
-            .find('select').bind('change.masterslavetoggle' + ++guid, data,
-                _anon(handleMasterToggle))
-                .trigger('change.masterslavetoggle' + guid).end()
-            .find('input:checkbox').bind('click.masterslavetoggle' + ++guid,
+    $.fn.bindMasterSlaveToggle = function(slaveid, action, values, master_is_multivalued) {
+        var data = { slaveid: slaveid, action: action, values: values , multivalued: master_is_multivalued };
+        var name = $(this).attr('id').split('-').pop();
+        var val = $(this).values(name);
+        var $items = $(this).find('select');
+        if ($items.length > 0) {
+            $items.bind('change.masterslavetoggle' + ++guid, data,
+                    _anon(handleMasterToggle))
+                    .trigger('change.masterslavetoggle' + guid);
+        }
+        $items = $(this).find('input:checkbox');
+        if ($items.length == 1) {
+            $items.bind('click.masterslavetoggle' + ++guid,
                 data, _anon(handleMasterToggle))
                 .trigger('click.masterslavetoggle' + guid);
+        } else if ($items.length > 1) {
+            alert('Not implemented');
+        }
+        $items = $(this).find('input:radio');
+        if ($items.length > 0) {
+            var $bound = $items.bind('click.masterslavetoggle' + ++guid,
+                data, _anon(handleMasterToggle));
+            if (val != null) {
+                $bound.each(function() {
+                    if ($(this).val() == val) {
+                        $(this).trigger('click');
+                    }
+                })
+            }
+                
+        }
         // Maintain the value even though we fired a click event which
         // may have changed it
-        $(this).find('input:checkbox').attr('checked', checked);
+        var new_data = new Object();
+        if (val == null) {
+            new_data[name] = '';
+        } else {
+            new_data[name] = val;
+        }
+        $(this).values(new_data);
     };
 })(jQuery);

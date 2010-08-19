@@ -71,12 +71,13 @@ slave_fields3 = (
 
 schema = BaseSchema + Schema((
 
-    IntegerField(
+    StringField(
         name='masterField',
         searchable=1,
-        default='',
+        default='4',
         vocabulary=['1','2','3','4','5','6'],
         widget=MasterSelectWidget(
+            format="radio",
             slave_fields=slave_fields,
             description="This field controls the vocabulary of slaveField1,"
                         "the available values in slaveField1 will be equal "
