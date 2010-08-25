@@ -165,7 +165,7 @@ schema = BaseSchema + Schema((
                         "the values 1 or 5 are selected.",
         ),
     ),
-
+    
     StringField(
         name='masterField2',
         searchable=0,
@@ -192,7 +192,7 @@ schema = BaseSchema + Schema((
                         "radio controls instead a dropdown.",
         ),
     ),
-
+    
     StringField(
         name='slaveMasterField',
         searchable=0,
@@ -208,7 +208,7 @@ schema = BaseSchema + Schema((
                         "be hidden.",
         ),
     ),
-
+    
     ReferenceField(
         name='slaveField4',
         searchable=0,
@@ -220,7 +220,7 @@ schema = BaseSchema + Schema((
                         "when the values c or g are selected.",
         ),
     ),
-
+    
     StringField(
         name='slaveValueField',
         searchable=0,
@@ -234,7 +234,7 @@ schema = BaseSchema + Schema((
                         "value 'one' is selected.",
         ),
     ),
-
+    
     StringField(
         name='masterField3',
         searchable=0,
@@ -249,7 +249,7 @@ schema = BaseSchema + Schema((
                         "'one' is selected.",
         ),
     ),
-
+    
     StringField(
         name='slaveField5',
         searchable=0,
@@ -259,7 +259,7 @@ schema = BaseSchema + Schema((
                         "only when the value 'other' is selected.",
         ),
     ),
-
+    
     BooleanField(
         name='masterBoolean',
         widget=MasterBooleanWidget(
@@ -269,7 +269,7 @@ schema = BaseSchema + Schema((
                 'which will only become visible when this checkbox is checked.'
         ),
     ),
-
+    
     StringField(
         name='slaveField6',
         widget=StringWidget(

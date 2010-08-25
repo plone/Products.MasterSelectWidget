@@ -208,8 +208,6 @@
                      values: values, 
                      multivalued: false, 
                      master: master };
-        console.log('Binding to: ' + this.attr('id') );
-        console.log(data);
         var val = typeAndValue(this);
         var $bound, $items; 
         if (val.type == 'select') {
