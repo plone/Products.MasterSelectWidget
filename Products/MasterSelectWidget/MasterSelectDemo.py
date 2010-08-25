@@ -109,6 +109,22 @@ schema = BaseSchema + Schema((
                         "radio controls instead a dropdown.",
         ),
     ),
+    StringField(
+        name='masterRadioNoDefaultField',
+        searchable=0,
+        vocabulary=['YES', 'NO'],
+        widget=MasterSelectWidget(
+            format="radio",
+            slave_fields=(
+                dict(name='slaveField1', action='show', hide_values=('NO',)),
+                dict(name='slaveField2', action='show', hide_values=('YES',)),
+            ),
+            description="This field has no default. If YES is selected, "
+                        "slaveField1 is visible and slaveField2 hidden. "
+                        "If NO is selected, slaveField1 is hidden and "
+                        "slaveField2 is visible.",
+        ),
+    ),
 
     LinesField(
         name='slaveField1',

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object name="MasterSelectDemo" meta_type="Factory-based Type Information"
-   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n_domain="plone">
  <property name="title">Master Select Demo</property>
  <property name="description">Demo from MasterSelectWidget.</property>
  <property name="content_icon">document_icon.gif</property>

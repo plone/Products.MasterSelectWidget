@@ -4,7 +4,7 @@ from zope.i18n import translate
 from Products.Archetypes import DisplayList
 from Products.Five import BrowserView
 
-SELECT = "$('#archetypes-fieldname-%(master)s')"
+SELECT = "$('[id=archetypes-fieldname-%(master)s]')"
 
 BINDERS = dict(
     vocabulary=SELECT + ".bindMasterSlaveVocabulary('%(name)s', "
