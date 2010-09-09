@@ -197,7 +197,15 @@
             action = action == 'hide' ? 'show' : 'enable';
         }
         if (action == 'show') {
-            slave.each(function() { $(this)[ val ? "show" : "hide" ](); });
+            slave.each(function() { 
+                // $(this)[ val ? "show" : "hide" ](); 
+                operation = val ? "show" : "hide";
+                if (operation == 'hide') {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
         } else {
             slave.find(':input').attr('disabled', val ? '' : 'disabled');
         }
