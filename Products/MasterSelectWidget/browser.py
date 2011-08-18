@@ -107,7 +107,7 @@ class MasterSelectJSONValue(BrowserView):
             result = self.getVocabulary(slave, value)
 
             if action == 'value':
-                return json.dumps(translate(result, self.request))
+                return json.dumps(translate(result, context=self.request))
 
             if isinstance(result, (tuple, list)):
                 result = DisplayList(zip(result, result))
@@ -122,7 +122,7 @@ class MasterSelectJSONValue(BrowserView):
             return json.dumps([
                 dict(
                     value=item,
-                    label=translate(result.getValue(item), self.request),
+                    label=translate(result.getValue(item), context=self.request),
                     selected=(item in actualValue) and 'selected' or '',
                 ) for item in result
             ])

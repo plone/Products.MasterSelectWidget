@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.4.5 (unreleased)
+------------------
+
+* Fixed ajax vocabulary values translation.
+  [thomasdesvenain]
+
 * Vocabulary ajax methods can be defined on archetypes.schemaextender extension class.
   [thomasdesvenain]
 
