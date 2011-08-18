@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Vocabulary ajax methods can be defined on archetypes.schemaextender extension class.
+  [thomasdesvenain]
+
 0.4.4 - 2010-04-16
 ------------------
 

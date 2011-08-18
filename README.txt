@@ -84,6 +84,8 @@ vocab_method
   name of this parameter defaults to 'master_value', but any name may be
   used as long as it is specified using the control_param element. Used
   only with 'action':'vocabulary' or 'action':'value'.
+  When used with archetypes.schemaextender, the vocabulary method can be
+  defined on schema extension class.
 
 control_param
   As described above, this is the name of the paramter used when
