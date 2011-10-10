@@ -1,7 +1,13 @@
-from setuptools import setup, find_packages
 import os
+import sys
+from setuptools import setup, find_packages
 
 version = '0.4.4'
+
+if sys.version_info[0] == 2 and sys.version_info[1] < 6:
+    requires = ['simplejson']
+else:
+    requires = []
 
 setup(name='Products.MasterSelectWidget',
       version=version,
@@ -26,8 +32,7 @@ setup(name='Products.MasterSelectWidget',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'simplejson',
-      ],
+      ] + requires,
       entry_points="""
       # -*- Entry points: -*-
       """,

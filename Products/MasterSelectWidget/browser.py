@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-import simplejson as json
+try:
+    import json
+except:
+    import simplejson as json
+
 from zope.i18n import translate
 from zope.component import getAdapters
 from Products.Archetypes import DisplayList

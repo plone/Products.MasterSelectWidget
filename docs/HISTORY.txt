@@ -4,6 +4,9 @@ Changelog
 0.4.5 (unreleased)
 ------------------
 
+* Try to use embedded json (Python 2.6+).
+  [thomasdesvenain]
+
 * Avoid warnings at startup.
   [thomasdesvenain]
 
