@@ -3,7 +3,7 @@
     var guid = 0;   // Used to give each handler binding a unique name
     // Anonymizer so we can bind the same handler multiple times per eventtype
     function _anon(f) { return function() { f.apply(this, arguments); }; };
-    
+
     // AJAX vocabulary handling
     function updateSelect(field, data) {
         var values = {}; // Remember current selections; reselect afterwards
@@ -11,7 +11,7 @@
             .each(function() { values[this] = $(this).val() })
             .empty().html( // Replace all options with new ones
                 $.map(data, function(entry) {
-                    return '<option value="' + entry.value + '" '+ entry.selected +' >' + 
+                    return '<option value="' + entry.value + '" '+ entry.selected +' >' +
                         entry.label + '</option>';
                 }).join('')
                 ).each(function(){if (!(this.selectedIndex))
@@ -19,18 +19,18 @@
                                      ).change();
     };
     function handleMasterVocabularyChange(event) {
-        var value = $.nodeName(this, 'input') ? 
+        var value = $.nodeName(this, 'input') ?
             '' + this.checked : $(this).val();
         var slave = event.data.slaveid;
         var cachekey = [this.id, slave, value].join(':');
         if (cache[cachekey] == undefined)
-            $.getJSON(event.data.url, 
+            $.getJSON(event.data.url,
                 { field: this.id, slave: slave, value: value },
                 function(data) {
                     cache[cachekey] = data;
                     updateSelect(slave, data);
                 });
-            else updateSelect(slave, cache[cachekey]);        
+            else updateSelect(slave, cache[cachekey]);
     };
     $.fn.bindMasterSlaveVocabulary = function(slaveid, url) {
         var data = { slaveid: slaveid, url: url };
@@ -39,11 +39,11 @@
                 data, _anon(handleMasterVocabularyChange))
                 .trigger('change.masterslavevocabulary' + guid).end()
             .find('input:checkbox').bind(
-                'click.masterslavevocabulary' + ++guid, data, 
+                'click.masterslavevocabulary' + ++guid, data,
                 _anon(handleMasterVocabularyChange))
                 .trigger('click.masterslavevocabulary' + guid);
     };
-    
+
     // AJAX value handling
     function updateValue(field, data) {
         field = $('#archetypes-fieldname-' + field + ' #' + field);
@@ -52,12 +52,12 @@
             field.siblings('iframe:first').contents().find('body').html(data);
     }
     function handleMasterValueChange(event) {
-        var value = $.nodeName(this, 'input') ? 
+        var value = $.nodeName(this, 'input') ?
             '' + this.checked : $(this).val();
         var slave = event.data.slaveid;
         var cachekey = [this.id, slave, value].join(':');
         if (cache[cachekey] == undefined)
-            $.getJSON(event.data.url, 
+            $.getJSON(event.data.url,
                 { field: this.id, slave: slave, value: value },
                 function(data) {
                     cache[cachekey] = data;
@@ -75,7 +75,7 @@
                 data, _anon(handleMasterValueChange))
                 .trigger('click.masterslavevalue' + guid);
     };
-    
+
     // Field status/visibility toggles
     function handleMasterToggle(event) {
         var action = event.data.action;
@@ -87,7 +87,7 @@
             action = action == 'hide' ? 'show' : 'enable';
         }
         if (action == 'show')
-            slave.each(function() { $(this)[ val ? "show" : "hide" ](); });
+            slave.each(function() { $(this)[ val ? "show" : "hide" ]('fast'); });
         else
             slave.find(':input').attr('disabled', val ? '' : 'disabled');
     }

@@ -4,7 +4,7 @@ Changelog
 0.4.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Use a 'fast' jQuery transition to show/hide slave fields.
 
 
 0.4.5 (2011-10-10)
