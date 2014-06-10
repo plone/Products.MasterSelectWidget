@@ -94,7 +94,10 @@
     $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
         var data = { slaveid: slaveid, action: action, values: values };
         var checkbox = $(this).find('input:checkbox')
-        var checked = checkbox.length ? checkbox.attr('checked') : undefined;
+        if (!checkbox) {
+            return;
+        }
+        var checked = checkbox.prop('checked');
         $(this)
             .find('select').bind('change.masterslavetoggle' + ++guid, data,
                 _anon(handleMasterToggle))
@@ -104,6 +107,6 @@
                 .trigger('click.masterslavetoggle' + guid);
         // Maintain the value even though we fired a click event which
         // may have changed it
-        $(this).find('input:checkbox').attr('checked', checked);
+        checkbox.attr('checked', checked);
     };
 })(jQuery);

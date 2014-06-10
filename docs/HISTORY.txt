@@ -4,8 +4,11 @@ Changelog
 0.4.6 (unreleased)
 ------------------
 
-- Use a 'fast' jQuery transition to show/hide slave fields.
+* Use a 'fast' jQuery transition to show/hide slave fields.
 
+* Do not check undefined checkboxes at initialisation (jQuery > 1.6 required)
+  (fixes https://github.com/plone/Products.MasterSelectWidget/issues/1)
+  [fRiSi] 
 
 0.4.5 (2011-10-10)
 ------------------
