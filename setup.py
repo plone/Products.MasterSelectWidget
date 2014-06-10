@@ -13,7 +13,7 @@ setup(name='Products.MasterSelectWidget',
       version=version,
       description="An Archetypes widget that controls the vocabulary or "
             "display of otheer fields on an edit page",
-      long_description=open("README.txt").read() + "\n" +
+      long_description=open("README.rst").read() + "\n" + 
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
