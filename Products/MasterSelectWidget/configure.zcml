@@ -39,5 +39,6 @@
     />
 
 <browser:resource name="masterselect.js" file="masterselect.js" />
+<browser:resource name="mastermultiselect.js" file="mastermultiselect.js" />
 
 </configure>

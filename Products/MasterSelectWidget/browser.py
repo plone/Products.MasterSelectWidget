@@ -19,11 +19,11 @@ except:
 SELECT = "$('#archetypes-fieldname-%(master)s')"
 
 BINDERS = dict(
-    vocabulary=SELECT + ".bindMasterSlaveVocabulary('%(name)s', "
+    vocabulary=SELECT + ".bind%(widget_type)sMasterSlaveVocabulary('%(name)s', "
         "'%(absolute_url)s/@@masterselect-jsonvalue');",
-    value=SELECT + ".bindMasterSlaveValue('%(name)s', "
+    value=SELECT + ".bind%(widget_type)sMasterSlaveValue('%(name)s', "
         "'%(absolute_url)s/@@masterselect-jsonvalue');",
-    toggle=SELECT + ".bindMasterSlaveToggle('%(name)s', '%(action)s', "
+    toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
         "%(hidden)s);",
 )
 
@@ -48,6 +48,7 @@ class SetupSlaves(BrowserView):
         for slave in self.getSlaves(field):
             slave['master'] = master
             slave['absolute_url'] = self.context.absolute_url()
+            slave['widget_type'] = field.multiValued and 'Multiselect' or ''
 
             slave.setdefault('control_param','master_value')
             hidden = '[]'
@@ -76,8 +77,7 @@ class MasterSelectJSONValue(BrowserView):
         return getattr(self.context.Schema()[fieldname].widget,
             'slave_fields', ())
 
-    def getVocabulary(self, slave, value):
-        kw = { slave['control_param']: value }
+    def getVocabulary(self, slave, kw):
         vocab_method = slave['vocab_method']
         method = getattr(self.context, vocab_method, None)
         if not method and HAS_SCHEMAEXTENDER:
@@ -108,7 +108,12 @@ class MasterSelectJSONValue(BrowserView):
             if action not in ['vocabulary', 'value']:
                 raise ValueError('Invalid master-slave action')
 
-            result = self.getVocabulary(slave, value)
+            decoder = json.JSONDecoder()
+            try:
+                kw = decoder.decode(value)
+            except ValueError:
+                kw = {slave['control_param']: value}
+            result = self.getVocabulary(slave, kw)
 
             if action == 'value':
                 return json.dumps(translate(result, context=self.request))
