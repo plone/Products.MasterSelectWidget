@@ -20,11 +20,11 @@ SELECT = "$('#archetypes-fieldname-%(master)s')"
 
 BINDERS = dict(
     vocabulary=SELECT + ".bind%(widget_type)sMasterSlaveVocabulary('%(name)s', "
-        "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    "'%(absolute_url)s/@@masterselect-jsonvalue');",
     value=SELECT + ".bind%(widget_type)sMasterSlaveValue('%(name)s', "
-        "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    "'%(absolute_url)s/@@masterselect-jsonvalue');",
     toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
-        "%(hidden)s);",
+    "%(hidden)s);",
 )
 
 JQUERY_ONLOAD = '''\
@@ -33,8 +33,10 @@ JQUERY_ONLOAD = '''\
 });})(jQuery);
 '''
 
+
 def boolean_value(value):
     return value in (1, '1', 'true', 'True', True)
+
 
 class SetupSlaves(BrowserView):
     """Generate Javascript to bind masters to slaves"""
@@ -50,11 +52,11 @@ class SetupSlaves(BrowserView):
             slave['absolute_url'] = self.context.absolute_url()
             slave['widget_type'] = field.multiValued and 'Multiselect' or ''
 
-            slave.setdefault('control_param','master_value')
+            slave.setdefault('control_param', 'master_value')
             hidden = '[]'
             if 'hide_values' in slave:
                 values = slave['hide_values']
-                if not isinstance(values, (tuple,list)):
+                if not isinstance(values, (tuple, list)):
                     values = [values]
                 if field.type == 'boolean':
                     values = [boolean_value(v) for v in values]
@@ -70,19 +72,18 @@ class SetupSlaves(BrowserView):
         """render javascript"""
         return JQUERY_ONLOAD % '\n'.join(self.renderJS(field))
 
+
 class MasterSelectJSONValue(BrowserView):
     """JSON vocabulary or value for the given slave field"""
 
     def getSlaves(self, fieldname):
-        return getattr(self.context.Schema()[fieldname].widget,
-            'slave_fields', ())
+        return getattr(self.context.Schema()[fieldname].widget, 'slave_fields', ())
 
     def getVocabulary(self, slave, kw):
         vocab_method = slave['vocab_method']
         method = getattr(self.context, vocab_method, None)
         if not method and HAS_SCHEMAEXTENDER:
-            extenders = [adapter for name, adapter
-                               in getAdapters((self.context,), ISchemaExtender)]
+            extenders = [adapter for name, adapter in getAdapters((self.context,), ISchemaExtender)]
             for extender in extenders:
                 method = getattr(extender, vocab_method, None)
                 if method:
@@ -113,6 +114,8 @@ class MasterSelectJSONValue(BrowserView):
                 kw = decoder.decode(value)
             except ValueError:
                 kw = {slave['control_param']: value}
+            if type(kw) is not dict:
+                kw = {slave['control_param']: kw}
             result = self.getVocabulary(slave, kw)
 
             if action == 'value':
@@ -125,8 +128,8 @@ class MasterSelectJSONValue(BrowserView):
             field = schema[slave_name]
 
             actualValue = field.getAccessor(self.context)()
-            if not isinstance(actualValue,list):
-                actualValue = [actualValue,]
+            if not isinstance(actualValue, list):
+                actualValue = [actualValue]
 
             return json.dumps([
                 dict(

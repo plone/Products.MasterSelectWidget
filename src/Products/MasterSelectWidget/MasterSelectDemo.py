@@ -1,6 +1,20 @@
 """Demonstrates the use of MasterSelectWidget."""
 
-from Products.Archetypes.public import *
+from Products.Archetypes.public import BaseContent
+from Products.Archetypes.public import BaseSchema
+from Products.Archetypes.public import BooleanField
+from Products.Archetypes.public import BooleanWidget
+from Products.Archetypes.public import DisplayList
+from Products.Archetypes.public import IntegerField
+from Products.Archetypes.public import LinesField
+from Products.Archetypes.public import MultiSelectionWidget
+from Products.Archetypes.public import ReferenceField
+from Products.Archetypes.public import ReferenceWidget
+from Products.Archetypes.public import registerType
+from Products.Archetypes.public import Schema
+from Products.Archetypes.public import SelectionWidget
+from Products.Archetypes.public import StringField
+from Products.Archetypes.public import StringWidget
 from AccessControl import ClassSecurityInfo
 from Products.MasterSelectWidget.MasterSelectWidget import MasterSelectWidget
 from Products.MasterSelectWidget.MasterBooleanWidget import MasterBooleanWidget
@@ -8,64 +22,73 @@ from Products.MasterSelectWidget.MasterBooleanWidget import MasterBooleanWidget
 # Define slave parameters for masterField
 slave_fields = (
     # Controls the vocab of slaveField1
-    {'name': 'slaveField1',
-     'action': 'vocabulary',
-     'vocab_method': 'getSlaveVocab',
-     'control_param': 'master',
+    {
+        'name': 'slaveField1',
+        'action': 'vocabulary',
+        'vocab_method': 'getSlaveVocab',
+        'control_param': 'master',
     },
     # Controls the visibility of slaveField1 also
-    {'name': 'slaveField1',
-     'action': 'hide',
-     'hide_values': ('6',),
+    {
+        'name': 'slaveField1',
+        'action': 'hide',
+        'hide_values': ('6',),
     },
     # Controls the visibility of slaveField2
-    {'name': 'slaveField2',
-     'action': 'hide',
-     'hide_values': ('2','4'),
+    {
+        'name': 'slaveField2',
+        'action': 'hide',
+        'hide_values': ('2', '4'),
     },
     # Disables slaveField3
-    {'name': 'slaveField3',
-     'action': 'disable',
-     'hide_values': ('1','5'),
+    {
+        'name': 'slaveField3',
+        'action': 'disable',
+        'hide_values': ('1', '5'),
     },
 )
 
 # Define slave parameters for masterField2
 slave_fields2 = (
     # Controls the vocab of slaveMasterField
-    {'name': 'slaveMasterField',
-     'action': 'vocabulary',
-     'vocab_method': 'getSlaveVocab2',
-     'control_param': 'master',
+    {
+        'name': 'slaveMasterField',
+        'action': 'vocabulary',
+        'vocab_method': 'getSlaveVocab2',
+        'control_param': 'master',
     },
     # Controls the value of slaveValueField
-    {'name': 'slaveValueField',
-     'action': 'value',
-     'vocab_method': 'getSlaveValue',
-     'control_param': 'master',
+    {
+        'name': 'slaveValueField',
+        'action': 'value',
+        'vocab_method': 'getSlaveValue',
+        'control_param': 'master',
     },
 )
 
 # Define slave parameters for slaveMasterField
 slave_master_fields = (
     # Controls the visibility of slaveField4
-    {'name': 'slaveField4',
-     'action': 'hide',
-     'hide_values': ('c','g'),
+    {
+        'name': 'slaveField4',
+        'action': 'hide',
+        'hide_values': ('c', 'g'),
     },
 )
 
 # define slave parameters for masterField3
 slave_fields3 = (
     # Controls the visibility of slaveField5
-    {'name': 'slaveField5',
-     'action': 'show',
-     'hide_values': ('other',),
+    {
+        'name': 'slaveField5',
+        'action': 'show',
+        'hide_values': ('other',),
     },
     # Enable slaveValueField
-    {'name': 'slaveValueField',
-     'action': 'enable',
-     'hide_values': ('one',),
+    {
+        'name': 'slaveValueField',
+        'action': 'enable',
+        'hide_values': ('one',),
     },
 )
 
@@ -75,7 +98,7 @@ schema = BaseSchema + Schema((
         name='masterField',
         searchable=1,
         default='',
-        vocabulary=['1','2','3','4','5','6'],
+        vocabulary=['1', '2', '3', '4', '5', '6'],
         widget=MasterSelectWidget(
             slave_fields=slave_fields,
             description="This field controls the vocabulary of slaveField1,"
@@ -92,7 +115,7 @@ schema = BaseSchema + Schema((
         name='slaveField1',
         searchable=1,
         default='',
-        vocabulary=['1','2','3','4','5','6'],
+        vocabulary=['1', '2', '3', '4', '5', '6'],
         widget=MultiSelectionWidget(
             format='select',
             description="This field's vocabulary is controlled by the value "
@@ -107,7 +130,7 @@ schema = BaseSchema + Schema((
         name='slaveField2',
         searchable=1,
         default='',
-        vocabulary=['10','20','30','40','50'],
+        vocabulary=['10', '20', '30', '40', '50'],
         widget=SelectionWidget(
             format='select',
             description="This field's visiblity is controlled by the value "
@@ -132,7 +155,7 @@ schema = BaseSchema + Schema((
         name='masterField2',
         searchable=1,
         default='',
-        vocabulary=['a','b','c','d','e','f'],
+        vocabulary=['a', 'b', 'c', 'd', 'e', 'f'],
         widget=MasterSelectWidget(
             slave_fields=slave_fields2,
             description="This field controls the vocabulary of slaveMasterField, "
@@ -147,7 +170,7 @@ schema = BaseSchema + Schema((
         name='slaveMasterField',
         searchable=1,
         default='',
-        vocabulary=['1','2','3','4','5','6'],
+        vocabulary=['1', '2', '3', '4', '5', '6'],
         widget=MasterSelectWidget(
             slave_fields=slave_master_fields,
             description="This field's vocabulary is controlled by the value "
@@ -189,7 +212,7 @@ schema = BaseSchema + Schema((
         name='masterField3',
         searchable=1,
         default='',
-        vocabulary=['one','two','three','other'],
+        vocabulary=['one', 'two', 'three', 'other'],
         widget=MasterSelectWidget(
             slave_fields=slave_fields3,
             description="This field controls the visibility of slaveField5. "
@@ -215,8 +238,8 @@ schema = BaseSchema + Schema((
         widget=MasterBooleanWidget(
             slave_fields=(
                 dict(name='slaveField6', action='show', hide_values=1),),
-            description='This field controls the visibility of slaveField6, '
-                'which will only become visible when this checkbox is checked.'
+            description="This field controls the visibility of slaveField6, "
+                        "which will only become visible when this checkbox is checked."
         ),
     ),
 
@@ -230,26 +253,29 @@ schema = BaseSchema + Schema((
     ),
 ))
 
+
 class MasterSelectDemo(BaseContent):
     """Demo from MasterSelectWidget."""
     schema = schema
     content_icon = "document_icon.gif"
     security = ClassSecurityInfo()
 
-    _at_rename_after_creation = True # rename object according to the title
+    _at_rename_after_creation = True  # rename object according to the title
 
     security.declarePublic('getSlaveVocab')
+
     def getSlaveVocab(self, master):
         """Vocab method that returns a vocabulary consisting of the numbers
         between the input number and 10.
 
         The displayed value has "num: " prepended.
         """
-        results = range(int(master)+1, 10)
-        results = [(str(a), "num: "+str(a)) for a in results]
+        results = range(int(master) + 1, 10)
+        results = [(str(a), "num: " + str(a)) for a in results]
         return DisplayList(results)
 
     security.declarePublic('getSlaveVocab2')
+
     def getSlaveVocab2(self, master):
         """Vocab method that returns a vocabulary consisting of the five
         letters after the selected letter.
@@ -257,15 +283,16 @@ class MasterSelectDemo(BaseContent):
         The displayed value will be capitalized, the stored value lowercase.
         """
         numeric = ord(master)
-        results = range(numeric+1, numeric+6)
+        results = range(numeric + 1, numeric + 6)
         results = [(chr(a), chr(a).upper()) for a in results]
         return DisplayList(results)
 
     security.declarePublic('getSlaveVocab2')
+
     def getSlaveValue(self, master):
         """Value method that returns ROT13 transformed input."""
         numeric = ord(master)
-        result = chr(numeric+13)
+        result = chr(numeric + 13)
         return result
 
 

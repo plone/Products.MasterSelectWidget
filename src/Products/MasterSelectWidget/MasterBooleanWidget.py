@@ -11,9 +11,9 @@ class MasterBooleanWidget(BooleanWidget):
         'macro': 'masterboolean',
         'format': 'select',
         'helper_js': ('++resource++masterselect.js',),
-        'slave_fields': (), # Fields controlled by this field, if control_type
-                            # is vocabulary only the first entry is used
-        })
+        'slave_fields': (),  # Fields controlled by this field, if control_type
+                             # is vocabulary only the first entry is used
+    })
 
 
 registerWidget(MasterBooleanWidget,

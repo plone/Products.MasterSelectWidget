@@ -11,9 +11,9 @@ class MasterMultiSelectWidget(MultiSelectionWidget):
         'macro': 'mastermultiselection',
         'format': 'select',
         'helper_js': ('++resource++mastermultiselect.js',),
-        'slave_fields': (), # Fields controlled by this field, if control_type
-                            # is vocabulary only the first entry is used
-        })
+        'slave_fields': (),  # Fields controlled by this field, if control_type
+                             # is vocabulary only the first entry is used
+    })
 
 
 registerWidget(MasterMultiSelectWidget,
