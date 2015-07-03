@@ -39,6 +39,7 @@ setup(name='Products.MasterSelectWidget',
               'plone.app.robotframework[debug, test]',
           ]),
       install_requires=[
+          'plone.api',
           'setuptools',
       ] + requires,
       entry_points="""
