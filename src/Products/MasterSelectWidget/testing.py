@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Base module for unittesting."""
 
-from plone.app.robotframework.testing import AUTOLOGIN_LIBRARY_FIXTURE
+from plone import api
+from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -71,7 +72,7 @@ FUNCTIONAL = FunctionalTesting(
 
 
 ACCEPTANCE = FunctionalTesting(bases=(FIXTURE,
-                                      AUTOLOGIN_LIBRARY_FIXTURE,
+                                      REMOTE_LIBRARY_BUNDLE_FIXTURE,
                                       z2.ZSERVER_FIXTURE),
                                name="ACCEPTANCE")
 
@@ -90,3 +91,23 @@ class FunctionalTestCase(unittest.TestCase):
     """Base class for functional tests."""
 
     layer = FUNCTIONAL
+
+
+class CreateSelectWidgetLayer(ProductsMasterselectwidgetLayer):
+
+    def setUpPloneSite(self, portal):
+        super(CreateSelectWidgetLayer, self).setUpPloneSite(portal)
+
+        # Create some test content
+        login(portal, )
+        test_selectwidget = api.content.create(
+                        type='MasterSelectDemo',
+                        id='idSelectDemo',
+                        container=portal.context,
+                      )
+        return test_selectwidget
+
+
+CREATE_SELECT_WIDGET_DEMO = CreateSelectWidgetLayer(
+        name="CREATE_SELECT_WIDGET_DEMO"
+            )
