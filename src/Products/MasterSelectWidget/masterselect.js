@@ -88,8 +88,12 @@
         }
         if (action == 'show')
             slave.each(function() { $(this)[ val ? "show" : "hide" ]('fast'); });
-        else
-            slave.find(':input').attr('disabled', val ? '' : 'disabled');
+        if (action == 'enable'){
+            if (val)
+                slave.find(':input').removeAttr('disabled');
+            else
+                slave.find(':input').attr('disabled', 'disabled');
+        }
     }
     $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
         var data = { slaveid: slaveid, action: action, values: values };
