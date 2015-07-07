@@ -36,7 +36,7 @@ setup(name='Products.MasterSelectWidget',
               'unittest2', 'zope.testing', 'plone.testing',
               'testfixtures',
               'plone.app.testing',
-              'plone.app.robotframework[debug, test]',
+              'plone.app.robotframework[debug]',
           ]),
       install_requires=[
           'plone.api',
