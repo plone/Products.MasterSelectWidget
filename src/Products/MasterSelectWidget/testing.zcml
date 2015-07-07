@@ -6,9 +6,9 @@
   <include file="configure.zcml" />
 
   <genericsetup:registerProfile
-      name="testing"
+      name="demo"
       title="Products.MasterSelectWidget tests"
-      directory="profiles/testing"
+      directory="profiles/demo"
       description="Steps to ease tests of Products.MasterSelectWidget"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />

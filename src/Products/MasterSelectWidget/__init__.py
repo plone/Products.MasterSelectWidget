@@ -5,6 +5,8 @@ from Products.MasterSelectWidget.config import PROJECTNAME
 
 
 def initialize(context):
+    import MasterSelectDemo
+
     content_types, constructors, ftis = process_types(
         listTypes(PROJECTNAME), PROJECTNAME
     )

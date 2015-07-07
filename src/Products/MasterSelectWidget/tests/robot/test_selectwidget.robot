@@ -13,7 +13,8 @@ Suite Teardown  Close all browsers
 *** Test Cases ***
 
 Test master select widget demo
-    Go to  ${PLONE_URL}
+    Go to  ${PLONE_URL}/msw_demo/edit
+    DEBUG
 
 *** Keywords ***
 
@@ -26,3 +27,4 @@ Log in as admin
     Input text  id=__ac_name  test-user
     Input password  id=__ac_password  secret
     Click Button  submit
+

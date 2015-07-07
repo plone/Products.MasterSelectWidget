@@ -21,10 +21,3 @@ class TestInstall(IntegrationTestCase):
         """Test if Products.MasterSelectWidget is cleanly uninstalled."""
         self.installer.uninstallProducts(['Products.MasterSelectWidget'])
         self.assertFalse(self.installer.isProductInstalled('Products.MasterSelectWidget'))
-
-    # browserlayer.xml
-    def test_browserlayer(self):
-        """Test that IProductsMasterselectwidgetLayer is registered."""
-        from Products.MasterSelectWidget.interfaces import IProductsMasterselectwidgetLayer
-        from plone.browserlayer import utils
-        self.assertIn(IProductsMasterselectwidgetLayer, utils.registered_layers())

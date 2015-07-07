@@ -3,7 +3,7 @@ import unittest
 import robotsuite
 from plone.testing import layered
 
-from ..testing import ACCEPTANCE
+from Products.MasterSelectWidget.testing import ACCEPTANCE
 
 
 def test_suite():
