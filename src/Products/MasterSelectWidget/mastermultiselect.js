@@ -104,8 +104,8 @@
                 slave.find(':input').attr('disabled', 'disabled');
         }
     }
-    $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
+    $.fn.bindMultiselectMasterSlaveToggle = function(slaveid, action, values) {
         var data = { slaveid: slaveid, action: action, values: values };
-        bindAndTrigger(this, data, handleMasterValueChange);
+        bindAndTrigger(this, data, handleMasterToggle);
     };
 })(jQuery);
