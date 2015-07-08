@@ -80,6 +80,31 @@ class MasterSelectJSONValue(BrowserView):
         return getattr(self.context.Schema()[fieldname].widget, 'slave_fields', ())
 
     def getVocabulary(self, slave, kw):
+        method_name = slave['vocab_method']
+        vocabulary = self._call_custom_method(method_name, slave, kw)
+        slave_name = slave.get('name')
+        schema = self.context.Schema()
+        field = schema[slave_name]
+
+        actualValue = field.getAccessor(self.context)()
+        if not isinstance(actualValue, list):
+            actualValue = [actualValue]
+        vocabulary = DisplayList(zip(vocabulary, vocabulary))
+
+        return json.dumps([
+            dict(
+                value=item,
+                label=translate(vocabulary.getValue(item), context=self.request),
+                selected=(item in actualValue) and 'selected' or '',
+            ) for item in vocabulary
+        ])
+
+    def getValues(self, slave, kw):
+        method_name = slave['vocab_method']
+        vocabulary = self._call_custom_method(method_name, slave, kw)
+        return json.dumps(translate(vocabulary, context=self.request))
+
+    def getToggle(self, slave, kw):
         vocab_method = slave['vocab_method']
         method = getattr(self.context, vocab_method, None)
         if not method and HAS_SCHEMAEXTENDER:
@@ -92,21 +117,31 @@ class MasterSelectJSONValue(BrowserView):
         result = method(**kw)
         return result
 
+    def _call_custom_method(self, method_name, slave, kw):
+        method = getattr(self.context, method_name, None)
+        if not method and HAS_SCHEMAEXTENDER:
+            extenders = [adapter for name, adapter in getAdapters((self.context,), ISchemaExtender)]
+            for extender in extenders:
+                method = getattr(extender, method_name, None)
+                if method:
+                    break
+
+        result = method(**kw)
+        return result
+
     def __call__(self):
-        self.request.response.setHeader(
-            'Content-Type', 'application/json; charset=utf-8')
+        self.request.response.setHeader('Content-Type', 'application/json; charset=utf-8')
 
         field = self.request['field']
         slaveid = self.request['slave']
         value = self.request['value']
 
-        schema = self.context.Schema()
         for slave in self.getSlaves(field):
             if slave['name'] != slaveid:
                 continue
 
             action = slave.get('action')
-            if action not in ['vocabulary', 'value']:
+            if action not in ['vocabulary', 'value', 'hide', 'disable']:
                 raise ValueError('Invalid master-slave action')
 
             decoder = json.JSONDecoder()
@@ -116,27 +151,10 @@ class MasterSelectJSONValue(BrowserView):
                 kw = {slave['control_param']: value}
             if type(kw) is not dict:
                 kw = {slave['control_param']: kw}
-            result = self.getVocabulary(slave, kw)
 
+            if action == 'vocabulary':
+                return self.getVocabulary(slave, kw)
             if action == 'value':
-                return json.dumps(translate(result, context=self.request))
-
-            if isinstance(result, (tuple, list)):
-                result = DisplayList(zip(result, result))
-
-            slave_name = slave.get('name')
-            field = schema[slave_name]
-
-            actualValue = field.getAccessor(self.context)()
-            if not isinstance(actualValue, list):
-                actualValue = [actualValue]
-
-            return json.dumps([
-                dict(
-                    value=item,
-                    label=translate(result.getValue(item), context=self.request),
-                    selected=(item in actualValue) and 'selected' or '',
-                ) for item in result
-            ])
+                return self.getValues(slave, kw)
 
         raise ValueError('No such master-slave combo')

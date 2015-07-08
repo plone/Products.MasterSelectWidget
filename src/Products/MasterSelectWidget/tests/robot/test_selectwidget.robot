@@ -32,11 +32,11 @@ ${mastermultiselect_id}  masterMultiSelect
 Test masterfield1 change vocabulary of slavefield1
     Select From List By Value  ${masterfield_1_id}  1
     ${vocabulary} =  Get List Items  ${slavefield_1_id}
-    ${expected_voc} =  Create List  num: 2  num: 3  num: 4  num: 5  num: 6  num: 7  num: 8  num: 9
+    ${expected_voc} =  Create List  2  3  4  5  6  7  8  9
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
     Select From List By Value  ${masterfield_1_id}  5
     ${vocabulary} =  Get List Items  ${slavefield_1_id}
-    ${expected_voc} =  Create List  num: 6  num: 7  num: 8  num: 9
+    ${expected_voc} =  Create List  6  7  8  9
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
 
 Test masterfield1 toggle visibility of slavefield1
@@ -66,11 +66,11 @@ Test masterfield1 toggle activation of slavefield3
 Test masterfield2 change vocabulary of slaveMasterField
     Select From List By Value  ${masterfield_2_id}  f
     ${vocabulary} =  Get List Items  ${slaveMasterfield_id}
-    ${expected_voc} =  Create List  G  H  I  J  K
+    ${expected_voc} =  Create List  g  h  i  j  k
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
     Select From List By Value  ${masterfield_2_id}  a
     ${vocabulary} =  Get List Items  ${slaveMasterfield_id}
-    ${expected_voc} =  Create List  B  C  D  E  F
+    ${expected_voc} =  Create List  b  c  d  e  f
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
 
 Test masterfield2 change value of slaveValueField
