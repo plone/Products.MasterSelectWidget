@@ -11,15 +11,15 @@ Suite Teardown  Close all browsers
 
 *** Variables ***
 
-${masterfield_id_1}  masterField
-${masterfield_id_2}  masterField2
-${masterfield_id_3}  masterField3
-${slavefield_id_1}  slaveField1
-${slavefield_id_2}  slaveField2
-${slavefield_id_3}  slaveField3
-${slavefield_id_4}  slaveField4
-${slavefield_id_5}  slaveField5
-${slavefield_id_6}  slaveField6
+${masterfield_1_id}  masterField
+${masterfield_2_id}  masterField2
+${masterfield_3_id}  masterField3
+${slavefield_1_id}  slaveField1
+${slavefield_2_id}  slaveField2
+${slavefield_3_id}  slaveField3
+${slavefield_4_id}  slaveField4
+${slavefield_5_id}  slaveField5
+${slavefield_6_id}  slaveField6
 ${slaveMasterfield_id}  slaveMasterField
 ${slaveValuefield_id}  slaveValueField
 ${masterboolean_id}  masterBoolean
@@ -27,88 +27,79 @@ ${masterboolean_id}  masterBoolean
 *** Test Cases ***
 
 Test masterfield1 change vocabulary of slavefield1
-    ${masterfield_1_xpath} =  Get field XPath  ${masterfield_id_1}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  1
-    Page Should Contain  num: 2
-    Page Should Contain  num: 3
-    Page Should Contain  num: 4
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  5
-    Page Should Not Contain  num: 2
-    Page Should Not Contain  num: 3
-    Page Should Not Contain  num: 4
+    Select From List By Value  ${masterfield_1_id}  1
+    ${vocabulary} =  Get List Items  ${slavefield_1_id}
+    ${expected_voc} =  Create List  num: 2  num: 3  num: 4  num: 5  num: 6  num: 7  num: 8  num: 9
+    Lists Should Be Equal  ${vocabulary}  ${expected_voc}
+    Select From List By Value  ${masterfield_1_id}  5
+    ${vocabulary} =  Get List Items  ${slavefield_1_id}
+    ${expected_voc} =  Create List  num: 6  num: 7  num: 8  num: 9
+    Lists Should Be Equal  ${vocabulary}  ${expected_voc}
 
 Test masterfield1 toggle visibility of slavefield1
-    ${masterfield_1_xpath} =  Get field XPath  ${masterfield_id_1}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  1
-    Element Should Be Visible  id=archetypes-fieldname-${slavefield_id_1}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  6
-    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_id_1}
+    Select From List By Value  ${masterfield_1_id}  1
+    Element Should Be Visible  id=archetypes-fieldname-${slavefield_1_id}
+    Select From List By Value  ${masterfield_1_id}  6
+    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_1_id}
 
 Test masterfield1 toggle visibility of slavefield2
-    ${masterfield_1_xpath} =  Get field XPath  ${masterfield_id_1}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  1
-    Element Should Be Visible  id=archetypes-fieldname-${slavefield_id_2}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  2
-    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_id_2}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  1
-    Element Should Be Visible  id=archetypes-fieldname-${slavefield_id_2}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  4
-    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_id_2}
+    Select From List By Value  ${masterfield_1_id}  1
+    Element Should Be Visible  id=archetypes-fieldname-${slavefield_2_id}
+    Select From List By Value  ${masterfield_1_id}  2
+    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_2_id}
+    Select From List By Value  ${masterfield_1_id}  1
+    Element Should Be Visible  id=archetypes-fieldname-${slavefield_2_id}
+    Select From List By Value  ${masterfield_1_id}  4
+    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_2_id}
 
 Test masterfield1 toggle activation of slavefield3
-    ${masterfield_1_xpath} =  Get field XPath  ${masterfield_id_1}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  1
-    Element Should Be Disabled  id=${slavefield_id_3}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  2
-    Element Should Be Enabled  id=${slavefield_id_3}
-    Select From List By Value  xpath=${masterfield_1_xpath}/select  5
-    Element Should Be Disabled  id=${slavefield_id_3}
+    Select From List By Value  ${masterfield_1_id}  1
+    Element Should Be Disabled  id=${slavefield_3_id}
+    Select From List By Value  ${masterfield_1_id}  2
+    Element Should Be Enabled  id=${slavefield_3_id}
+    Select From List By Value  ${masterfield_1_id}  5
+    Element Should Be Disabled  id=${slavefield_3_id}
 
 Test masterfield2 change vocabulary of slaveMasterField
-    ${masterfield_2_xpath} =  Get field XPath  ${masterfield_id_2}
-    Select From List By Value  xpath=${masterfield_2_xpath}/select  f
+    Select From List By Value  ${masterfield_2_id}  f
     ${vocabulary} =  Get List Items  ${slaveMasterfield_id}
     ${expected_voc} =  Create List  G  H  I  J  K
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
-    Select From List By Value  xpath=${masterfield_2_xpath}/select  a
+    Select From List By Value  ${masterfield_2_id}  a
     ${vocabulary} =  Get List Items  ${slaveMasterfield_id}
     ${expected_voc} =  Create List  B  C  D  E  F
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
 
 Test masterfield2 change value of slaveValueField
-    ${masterfield_2_xpath} =  Get field XPath  ${masterfield_id_2}
-    Select From List By Value  xpath=${masterfield_2_xpath}/select  d
+    Select From List By Value  ${masterfield_2_id}  d
     Textfield Value Should Be  ${slaveValuefield_id}  q
-    Select From List By Value  xpath=${masterfield_2_xpath}/select  a
+    Select From List By Value  ${masterfield_2_id}  a
     Textfield Value Should Be  ${slaveValuefield_id}  n
 
 Test slaveMasterField toggle visibility of slavefield4
-    ${slaveMasterfield_xpath} =  Get field XPath  ${slaveMasterfield_id}
-    Select From List By Value  xpath=${slaveMasterfield_xpath}/select  b
-    Element Should Be Visible  id=archetypes-fieldname-${slavefield_id_4}
-    Select From List By Value  xpath=${slaveMasterfield_xpath}/select  c
-    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_id_4}
+    Select From List By Value  ${slaveMasterfield_id}  b
+    Element Should Be Visible  id=archetypes-fieldname-${slavefield_4_id}
+    Select From List By Value  ${slaveMasterfield_id}  c
+    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_4_id}
 
 Test masterfield3 toggle activation of slaveValueField
-    ${masterfield_3_xpath} =  Get field XPath  ${masterfield_id_3}
-    Select From List By Value  xpath=${masterfield_3_xpath}/select  other
+    Select From List By Value  ${masterfield_3_id}  other
     Element Should Be Disabled  id=${slaveValuefield_id}
-    Select From List By Value  xpath=${masterfield_3_xpath}/select  one
+    Select From List By Value  ${masterfield_3_id}  one
     Element Should Be Enabled  id=${slaveValuefield_id}
 
 Test masterfield3 toggle visibility of slavefield5
-    ${masterfield_3_xpath} =  Get field XPath  ${masterfield_id_3}
-    Select From List By Value  xpath=${masterfield_3_xpath}/select  other
-    Element Should Be Visible  id=${slavefield_id_5}
-    Select From List By Value  xpath=${masterfield_3_xpath}/select  one
-    Element Should Not Be Visible  id=${slavefield_id_5}
+    Select From List By Value  ${masterfield_3_id}  other
+    Element Should Be Visible  id=${slavefield_5_id}
+    Select From List By Value  ${masterfield_3_id}  one
+    Element Should Not Be Visible  id=${slavefield_5_id}
 
 Test masterboolean toggle visibility of slavefield6
-    Element Should Not Be Visible  id=${slavefield_id_6}
+    Element Should Not Be Visible  id=${slavefield_6_id}
     Select Checkbox  ${masterboolean_id}
-    Element Should Be Visible  id=${slavefield_id_6}
+    Element Should Be Visible  id=${slavefield_6_id}
     Unselect Checkbox  ${masterboolean_id}
-    Element Should Not Be Visible  id=${slavefield_id_6}
+    Element Should Not Be Visible  id=${slavefield_6_id}
 
 *** Keywords ***
 
@@ -122,8 +113,4 @@ Log in as admin
     Input text  id=__ac_name  test-user
     Input password  id=__ac_password  secret
     Click Button  submit
-
-Get field XPath
-    [Arguments]  ${field_id}
-    [Return]  //div[@id="archetypes-fieldname-${field_id}"]
 
