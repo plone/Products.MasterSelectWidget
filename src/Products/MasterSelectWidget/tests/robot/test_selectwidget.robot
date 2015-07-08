@@ -23,6 +23,7 @@ ${slavefield_6_id}  slaveField6
 ${slavefield_7_id}  slaveField7
 ${slaveMasterfield_id}  slaveMasterField
 ${slaveValuefield_id}  slaveValueField
+${slaveValuefield_2_id}  slaveValueField2
 ${masterboolean_id}  masterBoolean
 ${mastermultiselect_id}  masterMultiSelect
 
@@ -111,17 +112,23 @@ Test mastermultiselect change vocabulary of slavefield7
     ${expected_voc} =  Create List  20
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
     Select Checkbox  ${mastermultiselect_id}_4
-    ${vocabulary} =  Get List Items  ${slavefield_7_id}
-    ${expected_voc} =  Create List  20  23  29  31  37  40
-    Lists Should Be Equal  ${vocabulary}  ${expected_voc}
     Select Checkbox  ${mastermultiselect_id}_3
     ${vocabulary} =  Get List Items  ${slavefield_7_id}
     ${expected_voc} =  Create List  20  23  29  30  31  37  40
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
-    Unselect Checkbox  ${mastermultiselect_id}_2
+    Unselect Checkbox  ${mastermultiselect_id}_3
     ${vocabulary} =  Get List Items  ${slavefield_7_id}
-    ${expected_voc} =  Create List  30  31  37  40
+    ${expected_voc} =  Create List  20  23  29  31  37  40
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
+
+Test mastermultiselect change value of slaveValueField2
+    Select Checkbox  ${mastermultiselect_id}_4
+    Select Checkbox  ${mastermultiselect_id}_3
+    Select Checkbox  ${mastermultiselect_id}_1
+    Unselect Checkbox  ${mastermultiselect_id}_2
+    Textfield Value Should Be  ${slaveValuefield_2_id}  80
+    Unselect Checkbox  ${mastermultiselect_id}_3
+    Textfield Value Should Be  ${slaveValuefield_2_id}  50
 
 *** Keywords ***
 
