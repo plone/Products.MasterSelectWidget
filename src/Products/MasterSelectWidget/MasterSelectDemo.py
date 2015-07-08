@@ -1,5 +1,6 @@
 """Demonstrates the use of MasterSelectWidget."""
 
+from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import BaseContent
 from Products.Archetypes.public import BaseSchema
 from Products.Archetypes.public import BooleanField
@@ -15,9 +16,9 @@ from Products.Archetypes.public import Schema
 from Products.Archetypes.public import SelectionWidget
 from Products.Archetypes.public import StringField
 from Products.Archetypes.public import StringWidget
-from AccessControl import ClassSecurityInfo
-from Products.MasterSelectWidget.MasterSelectWidget import MasterSelectWidget
 from Products.MasterSelectWidget.MasterBooleanWidget import MasterBooleanWidget
+from Products.MasterSelectWidget.MasterMultiSelectWidget import MasterMultiSelectWidget
+from Products.MasterSelectWidget.MasterSelectWidget import MasterSelectWidget
 
 # Define slave parameters for masterField
 slave_fields = (
@@ -89,6 +90,24 @@ slave_fields3 = (
         'name': 'slaveValueField',
         'action': 'enable',
         'hide_values': ('one',),
+    },
+)
+
+# define slave parameters for masterMultiSelect
+multiselect_slave_fields = (
+    # Controls the vocabulary of slaveField7
+    {
+        'name': 'slaveField7',
+        'action': 'vocabulary',
+        'vocab_method': 'getSlaveVocab7',
+        'control_param': 'values',
+    },
+    # Controls the value of slaveValueField2
+    {
+        'name': 'slaveValueField2',
+        'action': 'value',
+        'vocab_method': 'getSlaveValue2',
+        'control_param': 'values',
     },
 )
 
@@ -251,6 +270,47 @@ schema = BaseSchema + Schema((
                         "only when that checkbox is checked.",
         ),
     ),
+
+    LinesField(
+        name='masterMultiSelect',
+        multiValued=1,
+        vocabulary=['10', '20', '30', '40'],
+        widget=MasterMultiSelectWidget(
+            slave_fields=multiselect_slave_fields,
+            format='checkbox',
+            description="This field controls the vocabulary of slaveField7. "
+                        "The available values in slaveField7 will be equal "
+                        "to the selected numbers and all the prime numbers"
+                        "between the lowest and higher selection. This field "
+                        "also controls the value of slaveValueField2, it will "
+                        "be the sum of all selected values masterMultiSelect."
+        ),
+    ),
+
+    LinesField(
+        name='slaveField7',
+        searchable=1,
+        default='',
+        vocabulary=[],
+        widget=SelectionWidget(
+            format='select',
+            description="This field's vocabulary is controlled by the values "
+                        "selected in masterMultiSelect. The values available here "
+                        "will be the selected numbers and all the prime numbers "
+                        "between them or 42 when no values are selected."
+        ),
+    ),
+
+    StringField(
+        name='slaveValueField2',
+        searchable=1,
+        default='',
+        widget=StringWidget(
+            description="This field's value is controlled by the values "
+                        "selected in masterMultiSelect. It will display the sum "
+                        "of all selected values."
+        ),
+    ),
 ))
 
 
@@ -287,12 +347,38 @@ class MasterSelectDemo(BaseContent):
         results = [(chr(a), chr(a).upper()) for a in results]
         return DisplayList(results)
 
-    security.declarePublic('getSlaveVocab2')
+    security.declarePublic('getSlaveValue')
 
     def getSlaveValue(self, master):
         """Value method that returns ROT13 transformed input."""
         numeric = ord(master)
         result = chr(numeric + 13)
+        return result
+
+    security.declarePublic('getSlaveVocab7')
+
+    def getSlaveVocab7(self, **values):
+        """Value method that returns values + prime numbers between values."""
+        def isPrime(n):
+            for i in range(2, int(n ** 0.5) + 1):
+                if n % i == 0:
+                    return False
+            return True
+
+        selection = sorted([int(val) for val, checked in values.iteritems() if checked])
+        selection = selection or [42]
+        results = []
+        for i in range(selection[0], selection[-1] + 1):
+            if i in selection or isPrime(i):
+                results.append((str(i), str(i)))
+        return DisplayList(results)
+
+    security.declarePublic('getSlaveValue2')
+
+    def getSlaveValue2(self, **values):
+        """Value method that returns the sum of selected values."""
+        selection = sorted([int(val) for val, checked in values.iteritems() if checked])
+        result = sum(selection)
         return result
 
 
