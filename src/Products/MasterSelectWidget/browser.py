@@ -230,7 +230,7 @@ class MasterSelectJSONValueYOLO(BrowserView):
                 continue
 
             action = slave.get('action')
-            if action not in ['vocabulary', 'value', 'hide', 'disable']:
+            if action not in ['vocabulary', 'value', 'hide', 'disable', 'enable']:
                 raise ValueError('Invalid master-slave action')
 
             decoder = json.JSONDecoder()

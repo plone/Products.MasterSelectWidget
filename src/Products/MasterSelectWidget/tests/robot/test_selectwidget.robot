@@ -121,15 +121,6 @@ Test mastermultiselect change vocabulary of slavefield7
     ${expected_voc} =  Create List  20  23  29  31  37  40
     Lists Should Be Equal  ${vocabulary}  ${expected_voc}
 
-Test mastermultiselect change value of slaveValueField2
-    Select Checkbox  ${mastermultiselect_id}_4
-    Select Checkbox  ${mastermultiselect_id}_3
-    Select Checkbox  ${mastermultiselect_id}_1
-    Unselect Checkbox  ${mastermultiselect_id}_2
-    Textfield Value Should Be  ${slaveValuefield_2_id}  80
-    Unselect Checkbox  ${mastermultiselect_id}_3
-    Textfield Value Should Be  ${slaveValuefield_2_id}  50
-
 Test mastermultiselect toggle visibility of slavefield7
     Element Should Be Visible  id=archetypes-fieldname-${slavefield_7_id}
     Select Checkbox  ${mastermultiselect_id}_1
@@ -139,6 +130,24 @@ Test mastermultiselect toggle visibility of slavefield7
     Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_7_id}
     Unselect Checkbox  ${mastermultiselect_id}_2
     Element Should Be Visible  id=archetypes-fieldname-${slavefield_7_id}
+
+Test mastermultiselect change value of slaveValueField2
+    Select Checkbox  ${mastermultiselect_id}_4
+    Select Checkbox  ${mastermultiselect_id}_3
+    Select Checkbox  ${mastermultiselect_id}_1
+    Unselect Checkbox  ${mastermultiselect_id}_2
+    Textfield Value Should Be  ${slaveValuefield_2_id}  80
+    Unselect Checkbox  ${mastermultiselect_id}_3
+    Textfield Value Should Be  ${slaveValuefield_2_id}  50
+
+Test mastermultiselect toggle activation of slaveValueField2
+    Unselect Checkbox  ${mastermultiselect_id}_1
+    Unselect Checkbox  ${mastermultiselect_id}_2
+    Element Should Be Disabled  id=${slaveValuefield_2_id}
+    Select Checkbox  ${mastermultiselect_id}_5
+    Element Should Be Disabled  id=${slaveValuefield_2_id}
+    Select Checkbox  ${mastermultiselect_id}_2
+    Element Should Be Enabled  id=${slaveValuefield_2_id}
 
 *** Keywords ***
 

@@ -116,6 +116,13 @@ multiselect_slave_fields = (
         'vocab_method': 'getSlaveValue2',
         'control_param': 'values',
     },
+    # Enable slaveValueField2
+    {
+        'name': 'slaveValueField2',
+        'action': 'enable',
+        'toggle_method': 'enableSlaveValue2',
+        'control_param': 'values',
+    },
 )
 
 schema = BaseSchema + Schema((
@@ -380,20 +387,27 @@ class MasterSelectDemo(BaseContent):
                 results.append((str(i), str(i)))
         return DisplayList(results)
 
-    security.declarePublic('getSlaveValue2')
-
-    def getSlaveValue2(self, **values):
-        """Value method that returns the sum of selected values."""
-        selection = sorted([int(val) for val, checked in values.iteritems() if checked])
-        result = sum(selection)
-        return result
-
     security.declarePublic('hideSlaveVocab7')
 
     def hideSlaveVocab7(self, **values):
         """Hide method returning true if 4 or more values are checked in masterfield"""
-        selection = sorted([int(val) for val, checked in values.iteritems() if checked])
+        selection = [val for val, checked in values.iteritems() if checked]
         return len(selection) >= 4
+
+    security.declarePublic('getSlaveValue2')
+
+    def getSlaveValue2(self, **values):
+        """Value method that returns the sum of selected values."""
+        selection = [int(val) for val, checked in values.iteritems() if checked]
+        result = sum(selection)
+        return result
+
+    security.declarePublic('enableSlaveValue2')
+
+    def enableSlaveValue2(self, **values):
+        """Enable method that returns true if any 10 or 20 is selected."""
+        selection = [val for val, checked in values.iteritems() if checked]
+        return '10' in selection or '20' in selection
 
 
 registerType(MasterSelectDemo, 'MasterSelectWidget')
