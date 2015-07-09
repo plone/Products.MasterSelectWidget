@@ -32,7 +32,7 @@
                 });
             else updateSelect(slave, cache[cachekey]);
     };
-    $.fn.bindMasterSlaveVocabulary = function(slaveid, url) {
+    $.fn.bindMasterSlaveVocabulary = function(slaveid, actions, url) {
         var data = { slaveid: slaveid, url: url };
         $(this)
             .find('select').bind('change.masterslavevocabulary' + ++guid,
@@ -65,7 +65,7 @@
                 });
             else updateValue(slave, cache[cachekey]);
     };
-    $.fn.bindMasterSlaveValue = function(slaveid, url) {
+    $.fn.bindMasterSlaveValue = function(slaveid, actions, url) {
         var data = { slaveid: slaveid, url: url };
         $(this)
             .find('select').bind('change.masterslavevalue' + ++guid, data,

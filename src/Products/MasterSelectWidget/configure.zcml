@@ -6,6 +6,8 @@
     i18n_domain="masterselectwidget"
     >
 
+<include package=".browser" />
+
 <genericsetup:registerProfile
     name="default"
     title="MasterSelectWidget"

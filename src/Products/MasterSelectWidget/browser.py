@@ -19,9 +19,9 @@ except:
 SELECT = "$('#archetypes-fieldname-%(master)s')"
 
 BINDERS = dict(
-    vocabulary=SELECT + ".bind%(widget_type)sMasterSlaveVocabulary('%(name)s', "
+    vocabulary=SELECT + ".bind%(widget_type)sMasterSlaveVocabulary('%(name)s', '%(action)s', "
     "'%(absolute_url)s/@@masterselect-jsonvalue');",
-    value=SELECT + ".bind%(widget_type)sMasterSlaveValue('%(name)s', "
+    value=SELECT + ".bind%(widget_type)sMasterSlaveValue('%(name)s', '%(action)s', "
     "'%(absolute_url)s/@@masterselect-jsonvalue');",
     toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
     "%(hidden)s);",
