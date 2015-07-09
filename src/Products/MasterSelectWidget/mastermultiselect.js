@@ -86,26 +86,37 @@
     };
 
     // Field status/visibility toggles
-    function handleMasterToggle(event) {
-        var action = event.data.action;
-        var slave = $('#archetypes-fieldname-' + event.data.slaveid);
-        var val = $.nodeName(this, 'input') ? this.checked : $(this).val();
-        val = $.inArray(val, event.data.values) > -1;
-        if ($.inArray(action, ['hide', 'disable']) > -1) {
-            val = !val;
-            action = action == 'hide' ? 'show' : 'enable';
-        }
+    function toggleField(field, data) {
+        var field = $('#archetypes-fieldname-' + field);
+        var toggle = data.toggle;
+        var action = data.action;
         if (action == 'show')
-            slave.each(function() { $(this)[ val ? "show" : "hide" ]('fast'); });
+            field.each(function() { $(this)[ toggle ? "show" : "hide" ]('fast'); });
         if (action == 'enable'){
-            if (val)
-                slave.find(':input').removeAttr('disabled');
+            if (toggle)
+                field.find(':input').removeAttr('disabled');
             else
-                slave.find(':input').attr('disabled', 'disabled');
+                field.find(':input').attr('disabled', 'disabled');
         }
     }
-    $.fn.bindMultiselectMasterSlaveToggle = function(slaveid, action, values) {
-        var data = { slaveid: slaveid, action: action, values: values };
+    function handleMasterToggle(event) {
+        var field = jQuery(this.closest('div.field'));
+        var fieldname = field.data('fieldname');
+        var values = getSelectedValuesJSON(field);
+        var slave = event.data.slaveid;
+        var action = event.data.action;
+        var cachekey = [fieldname, slave, action, values].join(':');
+        if (cache[cachekey] == undefined)
+            $.getJSON(event.data.url,
+                { field: fieldname, slave: slave, action: action, value: values},
+                function(data) {
+                    cache[cachekey] = data;
+                    toggleField(slave, data);
+                });
+            else toggleField(slave, cache[cachekey]);
+    };
+    $.fn.bindMultiselectMasterSlaveToggle = function(slaveid, action, url) {
+        var data = { slaveid: slaveid, action: action, url: url };
         bindAndTrigger(this, data, handleMasterToggle);
     };
 })(jQuery);

@@ -130,6 +130,16 @@ Test mastermultiselect change value of slaveValueField2
     Unselect Checkbox  ${mastermultiselect_id}_3
     Textfield Value Should Be  ${slaveValuefield_2_id}  50
 
+Test mastermultiselect toggle visibility of slavefield7
+    Element Should Be Visible  id=archetypes-fieldname-${slavefield_7_id}
+    Select Checkbox  ${mastermultiselect_id}_1
+    Select Checkbox  ${mastermultiselect_id}_2
+    Select Checkbox  ${mastermultiselect_id}_3
+    Select Checkbox  ${mastermultiselect_id}_4
+    Element Should Not Be Visible  id=archetypes-fieldname-${slavefield_7_id}
+    Unselect Checkbox  ${mastermultiselect_id}_2
+    Element Should Be Visible  id=archetypes-fieldname-${slavefield_7_id}
+
 *** Keywords ***
 
 Suite Setup

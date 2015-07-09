@@ -102,6 +102,13 @@ multiselect_slave_fields = (
         'vocab_method': 'getSlaveVocab7',
         'control_param': 'values',
     },
+    # Controls the visibility of slaveField7
+    {
+        'name': 'slaveField7',
+        'action': 'hide',
+        'toggle_method': 'hideSlaveVocab7',
+        'control_param': 'values',
+    },
     # Controls the value of slaveValueField2
     {
         'name': 'slaveValueField2',
@@ -274,7 +281,7 @@ schema = BaseSchema + Schema((
     LinesField(
         name='masterMultiSelect',
         multiValued=1,
-        vocabulary=['10', '20', '30', '40'],
+        vocabulary=['10', '20', '30', '40', '50'],
         widget=MasterMultiSelectWidget(
             slave_fields=multiselect_slave_fields,
             format='checkbox',
@@ -337,7 +344,7 @@ class MasterSelectDemo(BaseContent):
     security.declarePublic('getSlaveVocab2')
 
     def getSlaveVocab2(self, master):
-        """Vocab method that returns a vocabulary consisting of the five
+        """Vocabulary method that returns a vocabulary consisting of the five
         letters after the selected letter.
 
         The displayed value will be capitalized, the stored value lowercase.
@@ -358,7 +365,7 @@ class MasterSelectDemo(BaseContent):
     security.declarePublic('getSlaveVocab7')
 
     def getSlaveVocab7(self, **values):
-        """Value method that returns values + prime numbers between values."""
+        """Vocabulary method that returns values + prime numbers between values."""
         def isPrime(n):
             for i in range(2, int(n ** 0.5) + 1):
                 if n % i == 0:
@@ -380,6 +387,13 @@ class MasterSelectDemo(BaseContent):
         selection = sorted([int(val) for val, checked in values.iteritems() if checked])
         result = sum(selection)
         return result
+
+    security.declarePublic('hideSlaveVocab7')
+
+    def hideSlaveVocab7(self, **values):
+        """Hide method returning true if 4 or more values are checked in masterfield"""
+        selection = sorted([int(val) for val, checked in values.iteritems() if checked])
+        return len(selection) >= 4
 
 
 registerType(MasterSelectDemo, 'MasterSelectWidget')
