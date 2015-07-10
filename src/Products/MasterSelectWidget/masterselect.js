@@ -4,6 +4,60 @@
     // Anonymizer so we can bind the same handler multiple times per eventtype
     function _anon(f) { return function() { f.apply(this, arguments); }; };
 
+    function bindHandler(field, data, function_to_bind) {
+        guid++;
+        $(field)
+            .find('input:checkbox').bind('click.masterslave' + guid,
+                data, _anon(function_to_bind)).end()
+            .find('select').bind('change.masterslave' + guid,
+                data, _anon(function_to_bind));
+    };
+
+    function triggerMultiselect(field) {
+        var activate = $(field).find('input:checkbox').first();
+        activate.trigger('click.masterslave' + guid).find('input:checkbox');
+        activate.is(':checked') ? activate.removeAttr('checked') : activate.attr('checked','checked');
+    };
+
+    function triggerSelect(field) {
+        $(field)
+            .find('input:checkbox').trigger('click.masterslave' + guid).end()
+            .find('select').trigger('change.masterslave' + guid);
+    };
+
+    function handleMasterFieldAction(event) {
+        var fieldname = jQuery(this.closest('div.field')).data('fieldname');
+        var args = event.data;
+        var slave = args.slaveid;
+        var action = args.action;
+        var values = args.getValues(this);
+        var cachekey = [fieldname, slave, action, values].join(':');
+        if (cache[cachekey] == undefined)
+            $.getJSON(event.data.url,
+                { field: fieldname, slave: slave, action: action, value: values},
+                function(data) {
+                    cache[cachekey] = data;
+                    args.doAction(slave, data);
+                });
+            else args.doAction(slave, cache[cachekey]);
+    };
+
+    function getJSONofMultiSelectValues(field) {
+        var field = jQuery(field.closest('div.field'));
+        var values = field.find('input:checkbox');
+        var listed_values = [];
+        for (var i = 0; i < values.length; i++){
+            listed_values.push('"' + jQuery(values[i]).attr('value') + '":' + values[i].checked);
+        }
+        var str_values = '{' + listed_values.join(',') + '}';
+        return str_values;
+    };
+
+    function getJSONofSingleSelectValue(field) {
+        var value = $.nodeName(field, 'input') ? '' + field.checked : $(field).val();
+        return value
+    };
+
     // AJAX vocabulary handling
     function updateSelect(field, data) {
         var values = {}; // Remember current selections; reselect afterwards
@@ -18,31 +72,6 @@
                                      $(this).val(values[this])}
                                      ).change();
     };
-    function handleMasterVocabularyChange(event) {
-        var value = $.nodeName(this, 'input') ?
-            '' + this.checked : $(this).val();
-        var slave = event.data.slaveid;
-        var cachekey = [this.id, slave, value].join(':');
-        if (cache[cachekey] == undefined)
-            $.getJSON(event.data.url,
-                { field: this.id, slave: slave, value: value },
-                function(data) {
-                    cache[cachekey] = data;
-                    updateSelect(slave, data);
-                });
-            else updateSelect(slave, cache[cachekey]);
-    };
-    $.fn.bindMasterSlaveVocabulary = function(slaveid, actions, url) {
-        var data = { slaveid: slaveid, url: url };
-        $(this)
-            .find('select').bind('change.masterslavevocabulary' + ++guid,
-                data, _anon(handleMasterVocabularyChange))
-                .trigger('change.masterslavevocabulary' + guid).end()
-            .find('input:checkbox').bind(
-                'click.masterslavevocabulary' + ++guid, data,
-                _anon(handleMasterVocabularyChange))
-                .trigger('click.masterslavevocabulary' + guid);
-    };
 
     // AJAX value handling
     function updateValue(field, data) {
@@ -50,30 +79,76 @@
         field.val(data).change();
         if (field.is('.kupu-editor-textarea')) // update kupu editor too
             field.siblings('iframe:first').contents().find('body').html(data);
-    }
-    function handleMasterValueChange(event) {
-        var value = $.nodeName(this, 'input') ?
-            '' + this.checked : $(this).val();
-        var slave = event.data.slaveid;
-        var cachekey = [this.id, slave, value].join(':');
-        if (cache[cachekey] == undefined)
-            $.getJSON(event.data.url,
-                { field: this.id, slave: slave, value: value },
-                function(data) {
-                    cache[cachekey] = data;
-                    updateValue(slave, data);
-                });
-            else updateValue(slave, cache[cachekey]);
     };
-    $.fn.bindMasterSlaveValue = function(slaveid, actions, url) {
-        var data = { slaveid: slaveid, url: url };
-        $(this)
-            .find('select').bind('change.masterslavevalue' + ++guid, data,
-                _anon(handleMasterValueChange))
-                .trigger('change.masterslavevalue' + guid).end()
-            .find('input:checkbox').bind('click.masterslavevalue' + ++guid,
-                data, _anon(handleMasterValueChange))
-                .trigger('click.masterslavevalue' + guid);
+
+    // Field status/visibility toggles
+    function toggleField(field, data) {
+        var field = $('#archetypes-fieldname-' + field);
+        var toggle = data.toggle;
+        var action = data.action;
+        if (action == 'show')
+            field.each(function() { $(this)[ toggle ? "show" : "hide" ]('fast'); });
+        if (action == 'enable'){
+            if (toggle)
+                field.find(':input').removeAttr('disabled');
+            else
+                field.find(':input').attr('disabled', 'disabled');
+        }
+    };
+    $.fn.bindMultiselectMasterSlaveVocabulary = function(slaveid, action, url) {
+        var data = {
+            slaveid: slaveid,
+            action: action,
+            url: url,
+            getValues: getJSONofMultiSelectValues,
+            doAction: updateSelect,
+        };
+        bindHandler(this, data, handleMasterFieldAction)
+        triggerMultiselect(this);
+    };
+    $.fn.bindMasterSlaveVocabulary = function(slaveid, action, url) {
+        var data = {
+            slaveid: slaveid,
+            action: action,
+            url: url,
+            getValues: getJSONofSingleSelectValue,
+            doAction: updateSelect,
+        };
+        bindHandler(this, data, handleMasterFieldAction);
+        triggerSelect(this);
+    };
+    $.fn.bindMultiselectMasterSlaveValue= function(slaveid, action, url) {
+        var data = {
+            slaveid: slaveid,
+            action: action,
+            url: url,
+            getValues: getJSONofMultiSelectValues,
+            doAction: updateValue,
+        };
+        bindHandler(this, data, handleMasterFieldAction)
+        triggerMultiselect(this);
+    };
+    $.fn.bindMasterSlaveValue = function(slaveid, action, url) {
+        var data = {
+            slaveid: slaveid,
+            action: action,
+            url: url,
+            getValues: getJSONofSingleSelectValue,
+            doAction: updateValue,
+        };
+        bindHandler(this, data, handleMasterFieldAction)
+        triggerSelect(this);
+    };
+    $.fn.bindMultiselectMasterSlaveToggle = function(slaveid, action, url) {
+        var data = {
+            slaveid: slaveid,
+            action: action,
+            url: url,
+            getValues: getJSONofMultiSelectValues,
+            doAction: toggleField,
+        };
+        bindHandler(this, data, handleMasterFieldAction)
+        triggerMultiselect(this);
     };
 
     // Field status/visibility toggles

@@ -10,7 +10,7 @@ class MasterMultiSelectWidget(MultiSelectionWidget):
     _properties.update({
         'macro': 'mastermultiselection',
         'format': 'select',
-        'helper_js': ('++resource++mastermultiselect.js',),
+        'helper_js': ('++resource++masterselect.js',),
         'slave_fields': (),  # Fields controlled by this field, if control_type
                              # is vocabulary only the first entry is used
     })
