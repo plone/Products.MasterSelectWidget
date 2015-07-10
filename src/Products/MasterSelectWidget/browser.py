@@ -25,8 +25,6 @@ BINDERS = dict(
     "'%(absolute_url)s/@@masterselect-jsonvalue');",
     toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
     "'%(absolute_url)s/@@masterselect-jsonvalue');",
-    multi_toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
-    "'%(absolute_url)s/@@masterselect-jsonvalue');",
 )
 
 JQUERY_ONLOAD = '''\
@@ -55,20 +53,8 @@ class SetupSlaves(BrowserView):
             slave['widget_type'] = field.multiValued and 'Multiselect' or ''
 
             slave.setdefault('control_param', 'master_value')
-            hidden = '[]'
-            if 'hide_values' in slave:
-                values = slave['hide_values']
-                if not isinstance(values, (tuple, list)):
-                    values = [values]
-                if field.type == 'boolean':
-                    values = [boolean_value(v) for v in values]
-                else:
-                    values = [str(v) for v in values]
-                hidden = json.dumps(values)
-            slave['hidden'] = hidden
 
-            toggle_type = field.multiValued and 'multi_toggle' or 'toggle'
-            template = BINDERS.get(slave.get('action')) or BINDERS[toggle_type]
+            template = BINDERS.get(slave.get('action')) or BINDERS['toggle']
             yield template % slave
 
     def __call__(self, field):
@@ -78,6 +64,18 @@ class SetupSlaves(BrowserView):
 
 class MasterSelectJSONValue(BrowserView):
     """JSON vocabulary or value for the given slave field"""
+
+    def _call_action_method(self, method_name, slave, args):
+        method = getattr(self.context, method_name, None)
+        if not method and HAS_SCHEMAEXTENDER:
+            extenders = [adapter for name, adapter in getAdapters((self.context,), ISchemaExtender)]
+            for extender in extenders:
+                method = getattr(extender, method_name, None)
+                if method:
+                    break
+
+        result = method(**args)
+        return result
 
     def getSlaves(self, fieldname):
         return getattr(self.context.Schema()[fieldname].widget, 'slave_fields', ())
@@ -90,7 +88,7 @@ class MasterSelectJSONValue(BrowserView):
         field = schema[slave_name]
 
         actualValue = field.getAccessor(self.context)()
-        if not isinstance(actualValue, list):
+        if not isinstance(actualValue, (list, tuple)):
             actualValue = [actualValue]
         vocabulary = DisplayList(zip(vocabulary, vocabulary))
 
@@ -103,39 +101,27 @@ class MasterSelectJSONValue(BrowserView):
         ])
         return json_voc
 
-    def getValues(self, slave, kw):
+    def getValues(self, slave, args):
         method_name = slave['vocab_method']
-        vocabulary = self._call_action_method(method_name, slave, kw)
+        vocabulary = self._call_action_method(method_name, slave, args)
         json_values = json.dumps(translate(vocabulary, context=self.request))
         return json_values
 
-    def getToggleValue(self, slave, action, kw):
+    def getToggleValue(self, slave, action, args):
         method_name = slave.get('toggle_method', None)
         if method_name:
-            toggle = self._call_action_method(method_name, slave, kw)
+            toggle = self._call_action_method(method_name, slave, args)
         else:
             hide_values = slave.get('hide_values')
-            if type(hide_values) not in [list, tuple]:
-                hide_values = (str(bool(hide_values)).lower(),)
-            toggle = kw in hide_values
+            if not isinstance(hide_values, [list, tuple]):
+                hide_values = (boolean_value(hide_values),)
+            toggle = args in hide_values
 
         if action in ['disable', 'hide']:
             toggle = not toggle
             action = action == 'disable' and 'enable' or 'show'
         json_toggle = json.dumps({'toggle': toggle, 'action': action})
         return json_toggle
-
-    def _call_action_method(self, method_name, slave, kw):
-        method = getattr(self.context, method_name, None)
-        if not method and HAS_SCHEMAEXTENDER:
-            extenders = [adapter for name, adapter in getAdapters((self.context,), ISchemaExtender)]
-            for extender in extenders:
-                method = getattr(extender, method_name, None)
-                if method:
-                    break
-
-        result = method(**kw)
-        return result
 
     def __call__(self):
         self.request.response.setHeader('Content-Type', 'application/json; charset=utf-8')
@@ -155,17 +141,17 @@ class MasterSelectJSONValue(BrowserView):
             args_name = slave.get('control_param', None)
             decoder = json.JSONDecoder()
             try:
-                kw = decoder.decode(value)
+                kwargs = decoder.decode(value)
             except ValueError:
-                kw = None
-            if type(kw) is not dict:
-                kw = args_name and {args_name: value} or value
+                kwargs = None
+            if type(kwargs) is not dict:
+                kwargs = args_name and {args_name: value} or value
 
             if action == 'vocabulary':
-                return self.getVocabulary(slave, kw)
+                return self.getVocabulary(slave, kwargs)
             elif action == 'value':
-                return self.getValues(slave, kw)
+                return self.getValues(slave, kwargs)
             elif action in ['hide', 'show', 'enable', 'disable']:
-                return self.getToggleValue(slave, action, kw)
+                return self.getToggleValue(slave, action, kwargs)
 
         raise ValueError('No such master-slave combo')

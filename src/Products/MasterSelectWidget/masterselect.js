@@ -38,9 +38,9 @@
     };
 
     function triggerMultiselect(field) {
-        var activate = $(field).find('input:checkbox').first();
-        activate.trigger('click.masterslave' + guid).find('input:checkbox');
-        activate.is(':checked') ? activate.removeAttr('checked') : activate.attr('checked','checked');
+        var field = $(field).find('input:checkbox').first();
+        field.trigger('click.masterslave' + guid).find('input:checkbox');
+        field.is(':checked') ? field.removeAttr('checked') : field.attr('checked','checked');
     };
 
     function triggerSelect(field) {
