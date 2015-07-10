@@ -291,7 +291,6 @@ schema = BaseSchema + Schema((
         vocabulary=['10', '20', '30', '40', '50'],
         widget=MasterMultiSelectWidget(
             slave_fields=multiselect_slave_fields,
-            format='checkbox',
             description="This field controls the vocabulary of slaveField7. "
                         "The available values in slaveField7 will be equal "
                         "to the selected numbers and all the prime numbers"

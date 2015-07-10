@@ -4,6 +4,7 @@ try:
 except:
     import simplejson as json
 
+from Products.MasterSelectWidget.config import AVAILABLE_ACTIONS
 from zope.i18n import translate
 from zope.component import getAdapters
 from Products.Archetypes import DisplayList
@@ -20,11 +21,11 @@ SELECT = "$('#archetypes-fieldname-%(master)s')"
 
 BINDERS = dict(
     vocabulary=SELECT + ".bind%(widget_type)sMasterSlaveVocabulary('%(name)s', '%(action)s', "
-    "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    "'%(absolute_url)s/@@masterselect-jsonvalue-vocabulary');",
     value=SELECT + ".bind%(widget_type)sMasterSlaveValue('%(name)s', '%(action)s', "
-    "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    "'%(absolute_url)s/@@masterselect-jsonvalue-values');",
     toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
-    "'%(absolute_url)s/@@masterselect-jsonvalue');",
+    "'%(absolute_url)s/@@masterselect-jsonvalue-toggle');",
 )
 
 JQUERY_ONLOAD = '''\
@@ -32,10 +33,6 @@ JQUERY_ONLOAD = '''\
 %s
 });})(jQuery);
 '''
-
-
-def boolean_value(value):
-    return value in (1, '1', 'true', 'True', True)
 
 
 class SetupSlaves(BrowserView):
@@ -62,8 +59,49 @@ class SetupSlaves(BrowserView):
         return JQUERY_ONLOAD % '\n'.join(self.renderJS(field))
 
 
-class MasterSelectJSONValue(BrowserView):
-    """JSON vocabulary or value for the given slave field"""
+class JSONValuesForAction(BrowserView):
+    """base class for views called to compute JSON values of an action"""
+
+    def __init__(self, context, request):
+        super(JSONValuesForAction, self).__init__(context, request)
+        self.field = self.request['field']
+        self.slaveid = self.request['slave']
+        self.value = self.request['value']
+        self.action = self.request['action']
+
+    def __call__(self):
+        self.request.response.setHeader('Content-Type', 'application/json; charset=utf-8')
+
+        action = self.action
+        value = self.value
+
+        if action not in AVAILABLE_ACTIONS:
+            raise ValueError('Invalid master-slave action')
+
+        for slave in self.getSlaves(self.field):
+            if slave['name'] != self.slaveid or slave['action'] != action:
+                continue
+            args = self.extractArguments(slave, value)
+
+            return self.computeJSONValues(slave, args)
+        raise ValueError('No such master-slave combo')
+
+    def getSlaves(self, fieldname):
+        return getattr(self.context.Schema()[fieldname].widget, 'slave_fields', ())
+
+    def extractArguments(self, slave, value):
+        args_name = slave.get('control_param', None)
+        decoder = json.JSONDecoder()
+        try:
+            args = decoder.decode(value)
+        except ValueError:
+            args = None
+        if type(args) is not dict:
+            args = args_name and {args_name: value} or value
+        return args
+
+    def computeJSONValues(self, slave, args):
+        """ to override """
 
     def _call_action_method(self, method_name, slave, args):
         method = getattr(self.context, method_name, None)
@@ -77,12 +115,13 @@ class MasterSelectJSONValue(BrowserView):
         result = method(**args)
         return result
 
-    def getSlaves(self, fieldname):
-        return getattr(self.context.Schema()[fieldname].widget, 'slave_fields', ())
 
-    def getVocabulary(self, slave, kw):
+class JSONValuesForVocabularyChange(JSONValuesForAction):
+    """view computing JSON values for 'vocabulary change' action"""
+
+    def computeJSONValues(self, slave, args):
         method_name = slave['vocab_method']
-        vocabulary = self._call_action_method(method_name, slave, kw)
+        vocabulary = self._call_action_method(method_name, slave, args)
         slave_name = slave.get('name')
         schema = self.context.Schema()
         field = schema[slave_name]
@@ -101,57 +140,35 @@ class MasterSelectJSONValue(BrowserView):
         ])
         return json_voc
 
-    def getValues(self, slave, args):
+
+class JSONValuesForValueUpdate(JSONValuesForAction):
+    """view computing JSON values for 'value change' action"""
+
+    def computeJSONValues(self, slave, args):
         method_name = slave['vocab_method']
         vocabulary = self._call_action_method(method_name, slave, args)
         json_values = json.dumps(translate(vocabulary, context=self.request))
+
         return json_values
 
-    def getToggleValue(self, slave, action, args):
+
+class JSONValuesForToggle(JSONValuesForAction):
+    """view computing JSON values for 'visibility/availability toggle' action"""
+
+    def computeJSONValues(self, slave, args):
         method_name = slave.get('toggle_method', None)
         if method_name:
             toggle = self._call_action_method(method_name, slave, args)
         else:
             hide_values = slave.get('hide_values')
-            if not isinstance(hide_values, [list, tuple]):
-                hide_values = (boolean_value(hide_values),)
+            if not isinstance(hide_values, (list, tuple)):
+                hide_values = (str(bool(hide_values)).lower(),)
             toggle = args in hide_values
 
+        action = self.action
         if action in ['disable', 'hide']:
             toggle = not toggle
             action = action == 'disable' and 'enable' or 'show'
         json_toggle = json.dumps({'toggle': toggle, 'action': action})
+
         return json_toggle
-
-    def __call__(self):
-        self.request.response.setHeader('Content-Type', 'application/json; charset=utf-8')
-
-        field = self.request['field']
-        slaveid = self.request['slave']
-        value = self.request['value']
-        action = self.request['action']
-
-        for slave in self.getSlaves(field):
-            if slave['name'] != slaveid or slave['action'] != action:
-                continue
-
-            if action not in ['vocabulary', 'value', 'hide', 'show', 'enable', 'disable']:
-                raise ValueError('Invalid master-slave action')
-
-            args_name = slave.get('control_param', None)
-            decoder = json.JSONDecoder()
-            try:
-                kwargs = decoder.decode(value)
-            except ValueError:
-                kwargs = None
-            if type(kwargs) is not dict:
-                kwargs = args_name and {args_name: value} or value
-
-            if action == 'vocabulary':
-                return self.getVocabulary(slave, kwargs)
-            elif action == 'value':
-                return self.getValues(slave, kwargs)
-            elif action in ['hide', 'show', 'enable', 'disable']:
-                return self.getToggleValue(slave, action, kwargs)
-
-        raise ValueError('No such master-slave combo')
