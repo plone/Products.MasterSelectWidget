@@ -24,7 +24,7 @@ BINDERS = dict(
     value=SELECT + ".bind%(widget_type)sMasterSlaveValue('%(name)s', '%(action)s', "
     "'%(absolute_url)s/@@masterselect-jsonvalue');",
     toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
-    "%(hidden)s);",
+    "'%(absolute_url)s/@@masterselect-jsonvalue');",
     multi_toggle=SELECT + ".bind%(widget_type)sMasterSlaveToggle('%(name)s', '%(action)s', "
     "'%(absolute_url)s/@@masterselect-jsonvalue');",
 )
@@ -110,8 +110,15 @@ class MasterSelectJSONValue(BrowserView):
         return json_values
 
     def getToggleValue(self, slave, action, kw):
-        method_name = slave['toggle_method']
-        toggle = self._call_action_method(method_name, slave, kw)
+        method_name = slave.get('toggle_method', None)
+        if method_name:
+            toggle = self._call_action_method(method_name, slave, kw)
+        else:
+            hide_values = slave.get('hide_values')
+            if type(hide_values) not in [list, tuple]:
+                hide_values = (str(bool(hide_values)).lower(),)
+            toggle = kw in hide_values
+
         if action in ['disable', 'hide']:
             toggle = not toggle
             action = action == 'disable' and 'enable' or 'show'
@@ -145,13 +152,14 @@ class MasterSelectJSONValue(BrowserView):
             if action not in ['vocabulary', 'value', 'hide', 'show', 'enable', 'disable']:
                 raise ValueError('Invalid master-slave action')
 
+            args_name = slave.get('control_param', None)
             decoder = json.JSONDecoder()
             try:
                 kw = decoder.decode(value)
             except ValueError:
-                kw = {slave['control_param']: value}
+                kw = None
             if type(kw) is not dict:
-                kw = {slave['control_param']: kw}
+                kw = args_name and {args_name: value} or value
 
             if action == 'vocabulary':
                 return self.getVocabulary(slave, kw)

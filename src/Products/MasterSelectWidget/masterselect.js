@@ -20,9 +20,13 @@
     };
 
     function triggerSelect(field) {
-        $(field)
-            .find('input:checkbox').trigger('click.masterslave' + guid).end()
-            .find('select').trigger('change.masterslave' + guid);
+        var checkbox = $(field).find('input:checkbox');
+        if (checkbox) {
+             var checked = checkbox.prop('checked');
+             checkbox.trigger('click.masterslave' + guid);
+             checkbox.attr('checked', checked);
+        };
+        $(field).find('select').trigger('change.masterslave' + guid);
     };
 
     function handleMasterFieldAction(event) {
@@ -95,6 +99,7 @@
                 field.find(':input').attr('disabled', 'disabled');
         }
     };
+
     $.fn.bindMultiselectMasterSlaveVocabulary = function(slaveid, action, url) {
         var data = {
             slaveid: slaveid,
@@ -150,42 +155,15 @@
         bindHandler(this, data, handleMasterFieldAction)
         triggerMultiselect(this);
     };
-
-    // Field status/visibility toggles
-    function handleMasterToggle(event) {
-        var action = event.data.action;
-        var slave = $('#archetypes-fieldname-' + event.data.slaveid);
-        var val = $.nodeName(this, 'input') ? this.checked : $(this).val();
-        val = $.inArray(val, event.data.values) > -1;
-        if ($.inArray(action, ['hide', 'disable']) > -1) {
-            val = !val;
-            action = action == 'hide' ? 'show' : 'enable';
-        }
-        if (action == 'show')
-            slave.each(function() { $(this)[ val ? "show" : "hide" ]('fast'); });
-        if (action == 'enable'){
-            if (val)
-                slave.find(':input').removeAttr('disabled');
-            else
-                slave.find(':input').attr('disabled', 'disabled');
-        }
-    }
-    $.fn.bindMasterSlaveToggle = function(slaveid, action, values) {
-        var data = { slaveid: slaveid, action: action, values: values };
-        var checkbox = $(this).find('input:checkbox')
-        if (!checkbox) {
-            return;
-        }
-        var checked = checkbox.prop('checked');
-        $(this)
-            .find('select').bind('change.masterslavetoggle' + ++guid, data,
-                _anon(handleMasterToggle))
-                .trigger('change.masterslavetoggle' + guid).end()
-            .find('input:checkbox').bind('click.masterslavetoggle' + ++guid,
-                data, _anon(handleMasterToggle))
-                .trigger('click.masterslavetoggle' + guid);
-        // Maintain the value even though we fired a click event which
-        // may have changed it
-        checkbox.attr('checked', checked);
+    $.fn.bindMasterSlaveToggle = function(slaveid, action, url) {
+        var data = {
+            slaveid: slaveid,
+            action: action,
+            url: url,
+            getValues: getJSONofSingleSelectValue,
+            doAction: toggleField,
+        };
+        bindHandler(this, data, handleMasterFieldAction)
+        triggerSelect(this);
     };
 })(jQuery);
