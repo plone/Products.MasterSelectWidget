@@ -9,8 +9,8 @@
             slaveid: slaveid,
             action: action,
             url: url,
-        var getValues = getValues;
-        var doAction = doAction;
+            getValues: getValues,
+            doAction: doAction,
         };
         guid++;
         $(field)
@@ -110,37 +110,37 @@
     $.fn.bindMultiselectMasterSlaveVocabulary = function(slaveid, action, url) {
         var getValues = getJSONofMultiSelectValues;
         var doAction = updateSelect;
-        bindHandler(this, slaveid, action, url, getValue, doAction)
+        bindHandler(this, slaveid, action, url, getValues, doAction);
         triggerMultiselect(this);
     };
     $.fn.bindMasterSlaveVocabulary = function(slaveid, action, url) {
         var getValues = getJSONofSingleSelectValue;
         var doAction = updateSelect;
-        bindHandler(this, slaveid, action, url, getValue, doAction)
+        bindHandler(this, slaveid, action, url, getValues, doAction);
         triggerSelect(this);
     };
     $.fn.bindMultiselectMasterSlaveValue= function(slaveid, action, url) {
         var getValues = getJSONofMultiSelectValues;
         var doAction = updateValue;
-        bindHandler(this, slaveid, action, url, getValue, doAction)
+        bindHandler(this, slaveid, action, url, getValues, doAction);
         triggerMultiselect(this);
     };
     $.fn.bindMasterSlaveValue = function(slaveid, action, url) {
         var getValues = getJSONofSingleSelectValue;
         var doAction = updateValue;
-        bindHandler(this, slaveid, action, url, getValue, doAction)
+        bindHandler(this, slaveid, action, url, getValues, doAction);
         triggerSelect(this);
     };
     $.fn.bindMultiselectMasterSlaveToggle = function(slaveid, action, url) {
         var getValues = getJSONofMultiSelectValues;
         var doAction = toggleField;
-        bindHandler(this, slaveid, action, url, getValue, doAction)
+        bindHandler(this, slaveid, action, url, getValues, doAction);
         triggerMultiselect(this);
     };
     $.fn.bindMasterSlaveToggle = function(slaveid, action, url) {
         var getValues = getJSONofSingleSelectValue;
         var doAction = toggleField;
-        bindHandler(this, slaveid, action, url, getValue, doAction)
+        bindHandler(this, slaveid, action, url, getValues, doAction);
         triggerSelect(this);
     };
 })(jQuery);
