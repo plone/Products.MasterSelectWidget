@@ -117,7 +117,7 @@ class JSONValuesForAction(BrowserView):
 
 
 class JSONValuesForVocabularyChange(JSONValuesForAction):
-    """view computing JSON values for 'vocabulary change' action"""
+    """view computing JSON values for 'vocabulary' action"""
 
     def computeJSONValues(self, slave, args):
         method_name = slave['vocab_method']
@@ -142,7 +142,7 @@ class JSONValuesForVocabularyChange(JSONValuesForAction):
 
 
 class JSONValuesForValueUpdate(JSONValuesForAction):
-    """view computing JSON values for 'value change' action"""
+    """view computing JSON values for 'value' action"""
 
     def computeJSONValues(self, slave, args):
         method_name = slave['vocab_method']
