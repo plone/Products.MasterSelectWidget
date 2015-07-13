@@ -4,7 +4,16 @@ Changelog
 0.4.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+
+* Add robot tests.
+  [sdelcourt] 
+
+* Fix enable/disable feature.
+  [sdelcourt] 
+
+* Add MasterMultiSelectWidget
+  [sdelcourt] 
+
 
 
 0.4.6 (2014-06-10)

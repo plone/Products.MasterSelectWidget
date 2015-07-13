@@ -87,8 +87,19 @@ vocab_method
   When used with archetypes.schemaextender, the vocabulary method can be
   defined on schema extension class.
 
+toggle_method
+  The name of a method to call returning True when the condition to toggle
+  activation or visibility of the slave field is met. The method must
+  accept a parameter which  will be used to pass the new value selected in
+  the master widget. The name of this parameter defaults to
+  'master_value', but any name may be used as long as it is specified
+  using the control_param element. Used only with 'action':'hide', 
+  'action':'show', 'action':'enable', 'action':'disable'.
+  When used with archetypes.schemaextender, the toggle method can be
+  defined on schema extension class.
+
 control_param
-  As described above, this is the name of the paramter used when
+  As described above, this is the name of the parameter used when
   calling the vocab_method. Used only with 'action':'vocabulary'
   or 'action':'value'.
 
@@ -103,6 +114,9 @@ A single MasterSelectWidget may control any number of slave fields, new
 fields are controlled by adding new mappings to the slave_fields list/tuple.
 A field which is the target of a MasterSelectWidget action may itself use
 a MasterSelectWidget to control other fields.
+
+This package also provides a MasterMultiSelectWidget providing the same
+features for a multiselection widget.
 
 The MasterSelectDemo type includes a number of master and slave widgets in
 different configurations.
