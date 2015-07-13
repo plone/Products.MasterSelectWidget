@@ -38,29 +38,51 @@
     };
 
     function triggerMultiselect(field) {
-        var field = $(field).find('input:checkbox').first();
-        field.trigger('click.masterslave' + guid).find('input:checkbox');
-        field.is(':checked') ? field.removeAttr('checked') : field.attr('checked','checked');
+        var type = field.find('input:checkbox').length ? 'checkbox' : 'select'
+        if (type == 'checkbox') {
+            var field = $(field).find('input:checkbox').first();
+            field.trigger('click.masterslave' + guid);
+            field.is(':checked') ? field.removeAttr('checked') : field.attr('checked','checked');
+        }
+        else{
+            var field = field.find('select').first();
+            field.trigger('change.masterslave' + guid);
+        }
     };
 
     function triggerSelect(field) {
         var checkbox = $(field).find('input:checkbox');
-        if (checkbox) {
+        if (checkbox.length) {
              var checked = checkbox.prop('checked');
              checkbox.trigger('click.masterslave' + guid);
              checkbox.attr('checked', checked);
-        };
-        $(field).find('select').trigger('change.masterslave' + guid);
+        }
+        else
+            $(field).find('select').trigger('change.masterslave' + guid);
     };
 
     function getJSONofMultiSelectValues(field) {
         var field = jQuery(field.closest('div.field'));
-        var values = field.find('input:checkbox');
         var listed_values = [];
-        for (var i = 0; i < values.length; i++){
-            listed_values.push('"' + jQuery(values[i]).attr('value') + '":' + values[i].checked);
+        var type = field.find('input:checkbox').length ? 'checkbox' : 'select'
+        if (type == 'checkbox') {
+            var values = field.find('input:checkbox');
+            for (var i = 0; i < values.length; i++){
+                listed_values.push(
+                    '{"selected":' + values[i].checked + ',"val":"' + jQuery(values[i]).attr('value') + '"}'
+                );
+            }
         }
-        var str_values = '{' + listed_values.join(',') + '}';
+        else{
+            var values = field.find('option');
+            for (var i = 0; i < values.length; i++){
+                listed_values.push(
+                    '{"selected":' + values[i].selected + ',"val":"' + jQuery(values[i]).attr('value') + '"}'
+                );
+            }
+       }
+
+        var str_values = '[' + listed_values.join(',') + ']';
         return str_values;
     };
 

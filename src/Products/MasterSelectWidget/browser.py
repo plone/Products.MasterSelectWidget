@@ -90,14 +90,13 @@ class JSONValuesForAction(BrowserView):
         return getattr(self.context.Schema()[fieldname].widget, 'slave_fields', ())
 
     def extractArguments(self, slave, value):
-        args_name = slave.get('control_param', None)
         decoder = json.JSONDecoder()
         try:
             args = decoder.decode(value)
         except ValueError:
-            args = None
-        if type(args) is not dict:
-            args = args_name and {args_name: value} or value
+            args = value
+        if type(args) is not list:
+            args = [args]
         return args
 
     def computeJSONValues(self, slave, args):
@@ -112,7 +111,7 @@ class JSONValuesForAction(BrowserView):
                 if method:
                     break
 
-        result = method(**args)
+        result = method(*args)
         return result
 
 
@@ -162,8 +161,10 @@ class JSONValuesForToggle(JSONValuesForAction):
         else:
             hide_values = slave.get('hide_values')
             if not isinstance(hide_values, (list, tuple)):
-                hide_values = (str(bool(hide_values)).lower(),)
-            toggle = args in hide_values
+                if not isinstance(hide_values, str):
+                    hide_values = str(bool(hide_values))
+                hide_values = (hide_values,)
+            toggle = str(args[0]) in hide_values
 
         action = self.action
         if action in ['disable', 'hide']:

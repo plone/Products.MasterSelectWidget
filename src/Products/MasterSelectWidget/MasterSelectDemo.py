@@ -109,6 +109,10 @@ multiselect_slave_fields = (
         'toggle_method': 'hideSlaveVocab7',
         'control_param': 'values',
     },
+)
+
+# define slave parameters for masterMultiSelect2
+multiselect_slave_fields2 = (
     # Controls the value of slaveValueField2
     {
         'name': 'slaveValueField2',
@@ -291,12 +295,11 @@ schema = BaseSchema + Schema((
         vocabulary=['10', '20', '30', '40', '50'],
         widget=MasterMultiSelectWidget(
             slave_fields=multiselect_slave_fields,
+            format='checkbox',
             description="This field controls the vocabulary of slaveField7. "
                         "The available values in slaveField7 will be equal "
-                        "to the selected numbers and all the prime numbers"
-                        "between the lowest and higher selection. This field "
-                        "also controls the value of slaveValueField2, it will "
-                        "be the sum of all selected values masterMultiSelect."
+                        "to the selected numbers and all the prime numbers "
+                        "between the lowest and higher selection."
         ),
     ),
 
@@ -314,14 +317,29 @@ schema = BaseSchema + Schema((
         ),
     ),
 
+    LinesField(
+        name='masterMultiSelect2',
+        multiValued=1,
+        vocabulary=['you', 'are', 'random', 'words', 'is', 'better', 'than', 'world'],
+        widget=MasterMultiSelectWidget(
+            slave_fields=multiselect_slave_fields2,
+            format='select',
+            description="This field controls the value of slaveValueField2, it "
+                        "will be a string join of all selected values. It also "
+                        "controls availability of slaveValueField2. It will be "
+                        "deactivated when both words 'you' and 'are' are selected."
+        ),
+    ),
+
     StringField(
         name='slaveValueField2',
         searchable=1,
-        default='',
+        default='default',
         widget=StringWidget(
-            description="This field's value is controlled by the values "
-                        "selected in masterMultiSelect. It will display the sum "
-                        "of all selected values."
+            description="This field's value is controlled by the values selected "
+                        "in masterMultiSelect2. It will display a join of all "
+                        "selected values. This field will be activated when both "
+                        "words 'you' and 'are' are selected."
         ),
     ),
 ))
@@ -370,7 +388,7 @@ class MasterSelectDemo(BaseContent):
 
     security.declarePublic('getSlaveVocab7')
 
-    def getSlaveVocab7(self, **values):
+    def getSlaveVocab7(self, *values):
         """Vocabulary method that returns values + prime numbers between values."""
         def isPrime(n):
             for i in range(2, int(n ** 0.5) + 1):
@@ -378,7 +396,7 @@ class MasterSelectDemo(BaseContent):
                     return False
             return True
 
-        selection = sorted([int(val) for val, checked in values.iteritems() if checked])
+        selection = sorted([int(v['val']) for v in values if v['selected']])
         selection = selection or [42]
         results = []
         for i in range(selection[0], selection[-1] + 1):
@@ -388,25 +406,26 @@ class MasterSelectDemo(BaseContent):
 
     security.declarePublic('hideSlaveVocab7')
 
-    def hideSlaveVocab7(self, **values):
+    def hideSlaveVocab7(self, *values):
         """Hide method returning true if 4 or more values are checked in masterfield"""
-        selection = [val for val, checked in values.iteritems() if checked]
+        selection = [v['val'] for v in values if v['selected']]
         return len(selection) >= 4
 
     security.declarePublic('getSlaveValue2')
 
-    def getSlaveValue2(self, **values):
+    def getSlaveValue2(self, *values):
         """Value method that returns the sum of selected values."""
-        selection = [int(val) for val, checked in values.iteritems() if checked]
-        result = sum(selection)
+        selection = [v['val'] for v in values if v['selected']]
+        result = ' '.join(selection)
         return result
 
     security.declarePublic('enableSlaveValue2')
 
-    def enableSlaveValue2(self, **values):
-        """Enable method that returns true if any 10 or 20 is selected."""
-        selection = [val for val, checked in values.iteritems() if checked]
-        return '10' in selection or '20' in selection
+    def enableSlaveValue2(self, *values):
+        """Enable method that returns true if both 'you' and 'are' are selected."""
+        selection = [v['val'] for v in values if v['selected']]
+        enable = 'you' in selection and 'are' in selection
+        return enable
 
 
 registerType(MasterSelectDemo, 'MasterSelectWidget')

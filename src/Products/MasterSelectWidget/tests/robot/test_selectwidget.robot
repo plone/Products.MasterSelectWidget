@@ -26,6 +26,7 @@ ${slaveValuefield_id}  slaveValueField
 ${slaveValuefield_2_id}  slaveValueField2
 ${masterboolean_id}  masterBoolean
 ${mastermultiselect_id}  masterMultiSelect
+${mastermultiselect2__id}  masterMultiSelect2
 
 *** Test Cases ***
 
@@ -141,23 +142,16 @@ Test mastermultiselect toggle visibility of slavefield7
     Unselect Checkbox  ${mastermultiselect_id}_2
     Element Should Be Visible  id=archetypes-fieldname-${slavefield_7_id}
 
-Test mastermultiselect change value of slaveValueField2
-    Select Checkbox  ${mastermultiselect_id}_4
-    Select Checkbox  ${mastermultiselect_id}_3
-    Select Checkbox  ${mastermultiselect_id}_1
-    Unselect Checkbox  ${mastermultiselect_id}_2
-    Textfield Value Should Be  ${slaveValuefield_2_id}  80
-    Unselect Checkbox  ${mastermultiselect_id}_3
-    Textfield Value Should Be  ${slaveValuefield_2_id}  50
+Test mastermultiselect2 change value of slaveValueField2
+    Select From List By Value  ${mastermultiselect_2_id}  words  better  world
+    Textfield Value Should Be  ${slaveValuefield_2_id}  words better world
 
-Test mastermultiselect toggle activation of slaveValueField2
-    Unselect Checkbox  ${mastermultiselect_id}_1
-    Unselect Checkbox  ${mastermultiselect_id}_2
+Test mastermultiselect2 toggle activation of slaveValueField2
     Element Should Be Disabled  id=${slaveValuefield_2_id}
-    Select Checkbox  ${mastermultiselect_id}_5
-    Element Should Be Disabled  id=${slaveValuefield_2_id}
-    Select Checkbox  ${mastermultiselect_id}_2
+    Select From List By Value  ${mastermultiselect_2_id}  you  are  random
     Element Should Be Enabled  id=${slaveValuefield_2_id}
+    Unselect From List By Value  ${mastermultiselect_2_id}  you
+    Element Should Be disabled  id=${slaveValuefield_2_id}
 
 *** Keywords ***
 
