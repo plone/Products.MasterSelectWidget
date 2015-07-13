@@ -18,6 +18,7 @@
                 data, _anon(handleMasterFieldAction)).end()
             .find('select').bind('change.masterslave' + guid,
                 data, _anon(handleMasterFieldAction));
+        triggerSelect(field);
     };
 
     function handleMasterFieldAction(event) {
@@ -37,28 +38,15 @@
             else args.doAction(slave, cache[cachekey]);
     };
 
-    function triggerMultiselect(field) {
+    function triggerSelect(field) {
         var type = field.find('input:checkbox').length ? 'checkbox' : 'select'
         if (type == 'checkbox') {
             var field = $(field).find('input:checkbox').first();
             field.trigger('click.masterslave' + guid);
             field.is(':checked') ? field.removeAttr('checked') : field.attr('checked','checked');
         }
-        else{
-            var field = field.find('select').first();
-            field.trigger('change.masterslave' + guid);
-        }
-    };
-
-    function triggerSelect(field) {
-        var checkbox = $(field).find('input:checkbox');
-        if (checkbox.length) {
-             var checked = checkbox.prop('checked');
-             checkbox.trigger('click.masterslave' + guid);
-             checkbox.attr('checked', checked);
-        }
         else
-            $(field).find('select').trigger('change.masterslave' + guid);
+            field.find('select').trigger('change.masterslave' + guid);
     };
 
     function getJSONofMultiSelectValues(field) {
@@ -133,36 +121,30 @@
         var getValues = getJSONofMultiSelectValues;
         var doAction = updateSelect;
         bindHandler(this, slaveid, action, url, getValues, doAction);
-        triggerMultiselect(this);
     };
     $.fn.bindMasterSlaveVocabulary = function(slaveid, action, url) {
         var getValues = getJSONofSingleSelectValue;
         var doAction = updateSelect;
         bindHandler(this, slaveid, action, url, getValues, doAction);
-        triggerSelect(this);
     };
     $.fn.bindMultiselectMasterSlaveValue= function(slaveid, action, url) {
         var getValues = getJSONofMultiSelectValues;
         var doAction = updateValue;
         bindHandler(this, slaveid, action, url, getValues, doAction);
-        triggerMultiselect(this);
     };
     $.fn.bindMasterSlaveValue = function(slaveid, action, url) {
         var getValues = getJSONofSingleSelectValue;
         var doAction = updateValue;
         bindHandler(this, slaveid, action, url, getValues, doAction);
-        triggerSelect(this);
     };
     $.fn.bindMultiselectMasterSlaveToggle = function(slaveid, action, url) {
         var getValues = getJSONofMultiSelectValues;
         var doAction = toggleField;
         bindHandler(this, slaveid, action, url, getValues, doAction);
-        triggerMultiselect(this);
     };
     $.fn.bindMasterSlaveToggle = function(slaveid, action, url) {
         var getValues = getJSONofSingleSelectValue;
         var doAction = toggleField;
         bindHandler(this, slaveid, action, url, getValues, doAction);
-        triggerSelect(this);
     };
 })(jQuery);
