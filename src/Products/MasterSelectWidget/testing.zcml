@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="Products.MasterSelectWidget">
+
+  <include file="configure.zcml" />
+
+  <genericsetup:registerProfile
+      name="demo"
+      title="Products.MasterSelectWidget tests"
+      directory="profiles/demo"
+      description="Steps to ease tests of Products.MasterSelectWidget"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+</configure>

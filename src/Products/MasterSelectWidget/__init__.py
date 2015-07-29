@@ -1,12 +1,15 @@
-from Products.CMFCore.utils import ContentInit
 from Products.Archetypes.public import process_types, listTypes
-from Products.MasterSelectWidget.config import *
+from Products.CMFCore.utils import ContentInit
+from Products.MasterSelectWidget.config import ADD_CONTENT_PERMISSION
+from Products.MasterSelectWidget.config import PROJECTNAME
+
 
 def initialize(context):
     import MasterSelectDemo
 
-    content_types, constructors, ftis=process_types(
-        listTypes(PROJECTNAME), PROJECTNAME)
+    content_types, constructors, ftis = process_types(
+        listTypes(PROJECTNAME), PROJECTNAME
+    )
 
     ContentInit(
         PROJECTNAME + ' Content',

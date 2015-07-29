@@ -6,6 +6,8 @@
     i18n_domain="masterselectwidget"
     >
 
+<include package=".browser" />
+
 <genericsetup:registerProfile
     name="default"
     title="MasterSelectWidget"
@@ -32,9 +34,23 @@
     />
 
 <browser:page
-    name="masterselect-jsonvalue"
+    name="masterselect-jsonvalue-vocabulary"
     for="Products.Archetypes.interfaces.IBaseObject"
-    class=".browser.MasterSelectJSONValue"
+    class=".browser.JSONValuesForVocabularyChange"
+    permission="zope2.View"
+    />
+
+<browser:page
+    name="masterselect-jsonvalue-values"
+    for="Products.Archetypes.interfaces.IBaseObject"
+    class=".browser.JSONValuesForValueUpdate"
+    permission="zope2.View"
+    />
+
+<browser:page
+    name="masterselect-jsonvalue-toggle"
+    for="Products.Archetypes.interfaces.IBaseObject"
+    class=".browser.JSONValuesForToggle"
     permission="zope2.View"
     />
 
