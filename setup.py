@@ -2,7 +2,7 @@ import os
 import sys
 from setuptools import setup, find_packages
 
-version = '0.4.7.dev0'
+version = '0.4.7'
 
 if sys.version_info[0] == 2 and sys.version_info[1] < 6:
     requires = ['simplejson']
