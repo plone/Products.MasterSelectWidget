@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.8 (unreleased)
+0.4.8 (2015-08-06)
 ------------------
 
 * Fix 'hide_values' argument conversion.
