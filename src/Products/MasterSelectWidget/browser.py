@@ -161,10 +161,13 @@ class JSONValuesForToggle(JSONValuesForAction):
         else:
             hide_values = slave.get('hide_values')
             if not isinstance(hide_values, (list, tuple)):
-                if not isinstance(hide_values, str):
-                    hide_values = str(bool(hide_values))
                 hide_values = (hide_values,)
-            toggle = str(args[0]) in hide_values
+            values = []
+            for val in hide_values:
+                if not isinstance(val, str):
+                    val = str(bool(val))
+                values.append(val)
+            toggle = str(args[0]) in values
 
         action = self.action
         if action in ['disable', 'hide']:
