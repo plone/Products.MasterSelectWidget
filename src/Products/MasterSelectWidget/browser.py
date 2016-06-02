@@ -128,7 +128,7 @@ class JSONValuesForVocabularyChange(JSONValuesForAction):
         actualValue = field.getAccessor(self.context)()
         if not isinstance(actualValue, (list, tuple)):
             actualValue = [actualValue]
-        vocabulary = DisplayList(zip(vocabulary.keys(), vocabulary.items()))
+        vocabulary = DisplayList(zip(vocabulary.keys(), vocabulary.values()))
 
         json_voc = json.dumps([
             dict(
