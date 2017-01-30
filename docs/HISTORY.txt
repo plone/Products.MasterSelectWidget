@@ -4,7 +4,8 @@ Changelog
 0.4.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix for @@masterselect-jsonvalue-vocabulary not outputting labels.
+  [mitakas]
 
 
 0.4.8 (2015-08-06)
