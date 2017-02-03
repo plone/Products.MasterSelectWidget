@@ -1,6 +1,7 @@
 graft src/Products
-graft docs/
-graft buildout.d/
+graft docs
+graft buildout.d
 include *.cfg *.rst *.in
 include *.py
 include *.txt
+
